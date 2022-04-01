@@ -1,4 +1,3 @@
-from crypt import methods
 from flask import Flask, jsonify, request
 from openpyxl import Workbook
 import webbrowser
@@ -46,16 +45,21 @@ def create_table():
 def generate_file():
     wb = Workbook()
     ws = wb.active
-    table_headers = request.json['headers']
-    ws.append(table_headers)
-    table_cells = request.json['cells']
+    headers_excel = []
+    content = request.json
+    # print(content)
+    table_headers = content['headers']
+    for header in table_headers:
+        headers_excel.append(header['name'])
+    print(headers_excel)
+    table_cells = content['cells']
+    ws.append(headers_excel)
     for row in table_cells:
         ws.append(row)
     wb.save('planilha.xlsx')
+    print("Arquivo salvo!")
     webbrowser.open("planilha.xlsx")
-    return wb
-    
-
+    return "FIle created"
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -25,7 +25,7 @@ function App() {
     let rowsDiv = document.getElementById('rowsDiv')
     let li = document.createElement('li');
 
-    columns.map(column => {
+    columns.forEach((column) => {
       let cell = document.getElementById(`value${column.id}`).value
       cells.push(cell)
     })
@@ -41,18 +41,31 @@ function App() {
     fetch(`tables/1`, {
       'method': 'GET',
       headers: {
-        'Content-type': 'application/json'
+        'Content-Type': 'application/json'
       }
     }).then(res => res.json())
     .then(res => setColumns(res.columns))  
     .catch(error => console.log(error))
   }, [])
 
+  async function handleGenerateSubmit(event) {
+    let content = {'cells': rows, 'headers': columns}
+    event.preventDefault()
+    await fetch('/generate_file', {
+      'method': 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(content)
+  })
+  }
+
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<Home columns={columns} insertRow={insertRow} rows={rows} />} />
+        <Route path='/' element={<Home columns={columns} insertRow={insertRow} rows={rows} handleGenerate={handleGenerateSubmit} />} />
       </Routes>
     </BrowserRouter>
   );

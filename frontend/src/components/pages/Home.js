@@ -35,7 +35,7 @@ export default function Home(props) {
                         <div>
                             <CreatableSelect options={tablesOptions} />
                         </div>
-                        <button className="btn btn-success mt-3">Generate File</button>
+                        <button type="submit" value="generateFile" onClick={props.handleGenerate} className="btn btn-success mt-3">Generate File</button>
                     </form>
                 </div>
                 
