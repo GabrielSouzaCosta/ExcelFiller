@@ -35,17 +35,16 @@ export default function Home(props) {
                         <div>
                             <CreatableSelect options={tablesOptions} />
                         </div>
-                        <button type="submit" value="generateFile" onClick={props.handleGenerate} className="btn btn-success mt-3">Generate File</button>
+                        <button type="submit" value="generateFile" onClick={props.handleGenerate} className="btn btn-success mt-3 mb-4">Generate File</button>
                     </form>
                 </div>
                 
-                
-                <h2 className="display-4 pt-4 pb-3 text-center">Columns</h2>
-                <div className="d-flex flex-row col-12 p-0 justify-content-start align-items-center">
+            
+                <div className="container-fluid d-flex flex-row col-12 p-0 justify-content-start align-items-center">
                     {props.columns.map(column => {
                         return(
                             <form key={column.id} className="p-0 m-0 me-3">
-                                <h2>{column.name}</h2>
+                                <input className="text-center mb-2" defaultValue={column.name}></input>
                                 <Select className=" mb-2" options={options} defaultValue={options[0]} />
                                 <input className="" id={`value${column.id}`}></input>
                             </form>          
@@ -62,10 +61,30 @@ export default function Home(props) {
                             </>
                         : ""    
                     }
-                    <button type="submit" onClick={props.insertRow} className="ms-3 btn btn-secondary h-100">Insert row</button>                           
+                    <button type="submit" onClick={props.insertRow} className="ms-3 btn btn-secondary h-100">Insert row</button>
+
                 </div>
-                <div className="d-flex flex-column" id="rowsDiv">
-                    
+                
+                <div className="col-12 p-0 justify-content-start align-items-center mt-3" id="rowsDiv">
+                    <div className="row w-100">
+                        {props.columns.map(column => {
+                            return(
+                                <div key={column.id + "_header"} className="col card text-center">
+                                    {column.name}
+                                </div>
+                            )
+                        })}
+                    </div>    
+                    {props.rows.map(row => {
+                        return(
+                            <div className="row w-100">
+                                {row.map(cell => {
+                                    return(<div className="col card">{cell}</div>)
+                                })}
+                                
+                            </div>
+                        )
+                    })}
                 </div>
 
             </div>

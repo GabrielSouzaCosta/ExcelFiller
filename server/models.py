@@ -1,3 +1,4 @@
+from enum import unique
 from app import app
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -11,8 +12,8 @@ def add_to_db(obj):
     db.session.commit()
 
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, unique=True)
+    email = db.Column(db.String, nullable=False, unique=True)
     password = db.Column(db.String, nullable=False)
     authenticated = db.Column(db.Boolean, default=False)
     admin = db.Column(db.Boolean, default=False)

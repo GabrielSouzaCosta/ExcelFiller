@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import Home from './components/pages/Home';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
+
+
 function App() {
 
   const [rows, setRows] = useState([])
@@ -21,18 +23,15 @@ function App() {
 
   function insertRow(e) {
     e.preventDefault()
-    const cells = []
     let rowsDiv = document.getElementById('rowsDiv')
-    let li = document.createElement('li');
-
+    
+    const cells = []
     columns.forEach((column) => {
       let cell = document.getElementById(`value${column.id}`).value
       cells.push(cell)
     })
     setRows([...rows, cells])
-    li.textContent = cells;
-  
-    rowsDiv.appendChild(li)
+
     console.log(rows)
 
   }
