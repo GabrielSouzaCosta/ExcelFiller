@@ -3,6 +3,7 @@ from flask import Flask, jsonify, redirect, request
 from openpyxl import Workbook
 import webbrowser
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required, current_user
+from flask_migrate import Migrate
 
 
 app = Flask(__name__)
@@ -11,6 +12,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql+psycopg2://gabrielsc:Sw77808
 jwt = JWTManager(app)
 
 from models import *
+
+migrate = Migrate(app, db)
 
 @jwt.user_identity_loader
 def user_identity_lookup(user):
@@ -30,7 +33,7 @@ def register():
     access_token = create_access_token(identity=email)
     print(access_token)
 
-    return user_schema.jsonify(user)
+    return user_schema.jsonify(user)    
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -64,6 +67,7 @@ def get_table(id):
 
 @app.route('/tables/<id>/add_column', methods = ['POST'])
 def add_column(id):
+    print(id)
     table = Table.query.get(id)
     table_id = id
     name = request.json['name']

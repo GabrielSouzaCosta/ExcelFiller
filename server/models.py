@@ -1,8 +1,9 @@
-from werkzeug.security import generate_password_hash, check_password_hash
 from app import app
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_marshmallow  import Marshmallow
+from hmac import compare_digest
+
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
@@ -12,10 +13,7 @@ def add_to_db(obj):
     db.session.commit()
 
 class User(db.Model):
-    __table_args__ = (db.UniqueConstraint("google_id"), db.UniqueConstraint("email"))
-
     id = db.Column(db.Integer, primary_key=True)
-    google_id = db.Column(db.String, nullable=True)
 
     email = db.Column(db.String, nullable=False, unique=True)
     password = db.Column(db.String, nullable=False)
@@ -24,22 +22,14 @@ class User(db.Model):
     createdAt = db.Column(db.DateTime, default=datetime.now)
     tables = db.relationship('Table', backref='user', lazy=True)
 
-    def __init__(self, email):
+    def __init__(self, email, password):
         self.email = email
+        self.password = password
 
-    @property
-    def password(self):
-        raise AttributeError("Can't read password")
+        
+    def check_password(self, input_password):
+        return compare_digest(input_password, self.password)
 
-    @password.setter
-    def password(self, password):
-        self.password = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.password, password)
-
-    # def check_password(self, input_password):
-    #     return compare_digest(input_password, self.password)
 
 class Table(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -84,3 +74,4 @@ column_schema = ColumnSchema()
 columns_schema = ColumnSchema(many=True)
 
 user_schema = UserSchema()
+
