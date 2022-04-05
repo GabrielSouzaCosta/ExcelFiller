@@ -55,7 +55,7 @@ export default function Home(props) {
                                     <input className="mb-2" placeholder="Name of the column"></input>
                                     <Select className=" mb-2" options={options} defaultValue={options[0]} />
                                 </form>
-                                <input style={{width: '30px'}} type="image" src="plus-square.svg" alt="add column" onClick={props.addColumn}></input>
+                                <input className="ms-2" style={{width: '30px'}} type="image" src="plus-square.svg" alt="add column" onClick={props.addColumn}></input>
                             </>
                         : ""    
                     }

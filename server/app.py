@@ -67,7 +67,6 @@ def get_table(id):
 
 @app.route('/tables/<id>/add_column', methods = ['POST'])
 def add_column(id):
-    print(id)
     table = Table.query.get(id)
     table_id = id
     name = request.json['name']

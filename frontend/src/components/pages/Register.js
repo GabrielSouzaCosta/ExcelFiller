@@ -1,10 +1,35 @@
-import React from "react";
+import React, { useState, useContext } from "react";
+import { AuthContext } from "../../GlobalStates";
+import { useNavigate } from "react-router";
 import Navbar from "../Navbar";
 
 export default function Register() {
 
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const navigate = useNavigate();
+    const [token, setToken] = useContext(AuthContext);
+
     function handleRegister(){
-        return ""
+        const opts = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+              },
+            body: JSON.stringify({"email": email, "password": password})
+        }
+
+        fetch('/register', opts)
+        .then(res => {
+            if (res.status === 200) {
+                navigate('/')
+                return res.json();
+            } else alert('There has been some error')
+        }).then(data => {
+            sessionStorage.setItem("token", data.access_token)
+            setToken(sessionStorage.getItem("token"))
+        })
+        .catch(error => console.log(error))
     }
     
     return(
