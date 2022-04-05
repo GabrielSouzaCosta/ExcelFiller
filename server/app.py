@@ -1,12 +1,53 @@
-from flask import Flask, jsonify, request
+import json
+from flask import Flask, jsonify, redirect, request
 from openpyxl import Workbook
 import webbrowser
+from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required, current_user
+
 
 app = Flask(__name__)
 app.config.from_object('config')
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql+psycopg2://gabrielsc:Sw778083@localhost/excelfiller_db"
+jwt = JWTManager(app)
 
 from models import *
+
+@jwt.user_identity_loader
+def user_identity_lookup(user):
+    return user
+
+@jwt.user_lookup_loader
+def user_lookup_callback(_jwt_header, jwt_data):
+    identity = jwt_data["sub"]
+    return User.query.filter_by(email=identity).one_or_none()
+
+@app.route('/register', methods=['POST'])
+def register():
+    email = request.json.get('email')
+    password = request.json.get('password')
+    user = User(email, password)
+    add_to_db(user)
+    access_token = create_access_token(identity=email)
+    print(access_token)
+
+    return user_schema.jsonify(user)
+
+@app.route('/login', methods=['POST'])
+def login():
+    email = request.json.get('email', None)
+    password = request.json.get('password', None)
+    user = User.query.filter_by(email=email).one_or_none()
+    if not user or not user.check_password(password):
+        return jsonify({"msg": "Wrong email or password"}), 401
+
+    access_token = create_access_token(identity=email)  
+    return jsonify(access_token=access_token), 200
+
+@app.route('/profile', methods=['GET'])
+@jwt_required()
+def profile():
+    return jsonify(id=current_user.id, email=current_user.email)
+
 
 @app.route('/tables', methods= ['GET'])
 def tables():

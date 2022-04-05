@@ -1,4 +1,4 @@
-from enum import unique
+from werkzeug.security import generate_password_hash, check_password_hash
 from app import app
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -12,7 +12,11 @@ def add_to_db(obj):
     db.session.commit()
 
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True, unique=True)
+    __table_args__ = (db.UniqueConstraint("google_id"), db.UniqueConstraint("email"))
+
+    id = db.Column(db.Integer, primary_key=True)
+    google_id = db.Column(db.String, nullable=True)
+
     email = db.Column(db.String, nullable=False, unique=True)
     password = db.Column(db.String, nullable=False)
     authenticated = db.Column(db.Boolean, default=False)
@@ -20,17 +24,22 @@ class User(db.Model):
     createdAt = db.Column(db.DateTime, default=datetime.now)
     tables = db.relationship('Table', backref='user', lazy=True)
 
-    def __init__(self, email, password):
+    def __init__(self, email):
         self.email = email
-        self.password = password
 
-    def get_id(self):
-        """Return the email address to satisfy Flask-Login's requirements."""
-        return self.id
+    @property
+    def password(self):
+        raise AttributeError("Can't read password")
 
-    def is_authenticated(self):
-        """Return True if the user is authenticated."""
-        return self.authenticated
+    @password.setter
+    def password(self, password):
+        self.password = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
+
+    # def check_password(self, input_password):
+    #     return compare_digest(input_password, self.password)
 
 class Table(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -52,6 +61,9 @@ class Column(db.Model):
         self.tableId = tableId
 
 
+class UserSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'email')
 
 class ColumnSchema(ma.Schema):
     class Meta:
@@ -70,3 +82,5 @@ tables_schema = TableSchema(many=True)
 
 column_schema = ColumnSchema()
 columns_schema = ColumnSchema(many=True)
+
+user_schema = UserSchema()

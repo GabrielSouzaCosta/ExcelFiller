@@ -20,11 +20,9 @@ const tablesOptions = [
 export default function Home(props) {
     
 
-
-
     return (
         <>
-            <div className="w-100">
+            <div className="vh-100">
                 
             <Navbar />
             <div className="container-fluid">
@@ -44,7 +42,7 @@ export default function Home(props) {
                     {props.columns.map(column => {
                         return(
                             <form key={column.id} className="p-0 m-0 me-3">
-                                <input className="text-center mb-2" defaultValue={column.name}></input>
+                                <input className="text-center mb-2" defaultValue={column.name} onChange={(e) => props.handleColumnChange(e, column.id)}></input>
                                 <Select className=" mb-2" options={options} defaultValue={options[0]} />
                                 <input className="" id={`value${column.id}`}></input>
                             </form>          
@@ -65,7 +63,7 @@ export default function Home(props) {
 
                 </div>
                 
-                <div className="col-12 p-0 justify-content-start align-items-center mt-3" id="rowsDiv">
+                <div className="col-12 p-0 justify-content-start align-items-center mt-3 ps-2" id="rowsDiv">
                     <div className="row w-100">
                         {props.columns.map(column => {
                             return(
@@ -92,7 +90,3 @@ export default function Home(props) {
         </>
     )
 }
-
-
-
-{/* <input type="image" className="ps-3 h-100" src="plus-square.svg" alt="add table" onClick={props.createTable}></input> */}
