@@ -9,6 +9,7 @@ export default function Login(props) {
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
     const [token, setToken] = useContext(AuthContext);
+    const [msg, setMsg] = useState("");
 
 
     function handleLogin() {
@@ -24,9 +25,14 @@ export default function Login(props) {
         .then(res => {
             if (res.status === 200) {
                 navigate('/')
-                return res.json();
-            } else alert('There has been some error')
+            }
+            return res.json();
         }).then(data => {
+            if (data.msg) {
+                setMsg(data.msg)
+                console.log(data.msg)
+                throw new Error(data.msg)
+            }
             sessionStorage.setItem("token", data.access_token)
             setToken(sessionStorage.getItem("token"))
         })

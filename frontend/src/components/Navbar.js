@@ -19,8 +19,8 @@ export default function Navbar (props) {
                         <ul className="nav navbar justify-content-center" >
                             {(token && token !== "" && token !== undefined) ?
                                 <>
-                                    <li className="nav-item"><a className="nav-link fs-5" href="http://localhost:3000">My Tables</a></li>
-                                    <li className="nav-item"><a onClick={(e) => logout(e)} className="nav-link fs-5" href="http://localhost:3000">Log out</a></li>
+                                    <li className="nav-item"><a className="nav-link fs-5" href="/my_tables">My Tables</a></li>
+                                    <li className="nav-item"><a onClick={(e) => logout(e)} className="nav-link fs-5" >Log out</a></li>
                                 </>
                                 :
                                 <li className="nav-item"><a className="nav-link fs-5" id="loginLink" href="http://localhost:3000/login">Login</a></li>

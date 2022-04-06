@@ -9,6 +9,7 @@ export default function Register() {
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
     const [token, setToken] = useContext(AuthContext);
+    const [msg, setMsg] = useState("");
 
     function handleRegister(){
         const opts = {
@@ -22,10 +23,15 @@ export default function Register() {
         fetch('/register', opts)
         .then(res => {
             if (res.status === 200) {
-                navigate('/')
-                return res.json();
-            } else alert('There has been some error')
+                navigate('/');
+            }
+            return res.json();
         }).then(data => {
+            if (data.msg) {
+                setMsg(data.msg)
+                console.log(data.msg)
+                throw new Error(data.msg)
+            }
             sessionStorage.setItem("token", data.access_token)
             setToken(sessionStorage.getItem("token"))
         })
@@ -40,11 +46,11 @@ export default function Register() {
             <div className="card d-flex flex-column w-100 h-75 justify-content-center align-items-center mt-4">
                 <h1 className="py-4">Register</h1>
                 <label htmlFor="email">Email:</label>
-                <input className="my-2" type="email" id="email" required></input>
+                <input className="my-2" type="email" id="email" onChange={(e) => setEmail(e.target.value)} required></input>
                 <label htmlFor="pwd" >Password:</label>
-                <input className="my-2" type="password" id="pwd" required></input>
-                <div id="passwordHelpBlock" class="form-text mb-3">
-                    Sua senha deve conter no mínimo 8 caracteres
+                <input className="my-2" type="password" id="pwd" onChange={(e) => setPassword(e.target.value)} required></input>
+                <div id="passwordHelpBlock" className="form-text mb-3   ">
+                    {msg}
                 </div>
                 <button className="my-3 btn btn-danger" type="submit" onClick={handleRegister}>Register</button>
                 

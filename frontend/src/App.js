@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import Home from './components/pages/Home';
 import Login from './components/pages/Login';
 import Register from './components/pages/Register';
+import MyTables from './components/pages/MyTables';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {AuthProvider} from './GlobalStates';
 
@@ -79,6 +80,7 @@ function App() {
           <Route path='/' element={<Home columns={columns} insertRow={insertRow} rows={rows} handleGenerate={handleGenerateSubmit} handleColumnChange={handleColumnChange} />} />
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
+          <Route path='/my_tables' element={<MyTables columns={columns} insertRow={insertRow} rows={rows} handleGenerate={handleGenerateSubmit} handleColumnChange={handleColumnChange} />} />  
       </Routes>
       </AuthProvider>
     </BrowserRouter>

@@ -15,6 +15,8 @@ from models import *
 
 migrate = Migrate(app, db)
 
+msg = ""
+
 @jwt.user_identity_loader
 def user_identity_lookup(user):
     return user
@@ -28,12 +30,22 @@ def user_lookup_callback(_jwt_header, jwt_data):
 def register():
     email = request.json.get('email')
     password = request.json.get('password')
+    user_exists = User.query.filter_by(email=email).one_or_none()
+    if user_exists:
+        print(user_exists)
+        msg = "The user already exists"
+        return {"msg": msg}, 401
+
+    if len(password) < 8:
+        msg = "The password must have at least 8 characters"
+        return {"msg": msg}, 401
+
     user = User(email, password)
     add_to_db(user)
     access_token = create_access_token(identity=email)
     print(access_token)
 
-    return user_schema.jsonify(user)    
+    return user_schema.jsonify(user), 200
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -41,7 +53,8 @@ def login():
     password = request.json.get('password', None)
     user = User.query.filter_by(email=email).one_or_none()
     if not user or not user.check_password(password):
-        return jsonify({"msg": "Wrong email or password"}), 401
+        msg = "Wrong email or password"
+        return {"msg": msg}, 401
 
     access_token = create_access_token(identity=email)  
     return jsonify(access_token=access_token), 200
