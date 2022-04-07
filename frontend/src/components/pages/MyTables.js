@@ -25,7 +25,7 @@ export default function MyTables(props) {
                 
             <Navbar />
             <div className="container-fluid">
-                <h1 className="display-4 py-3 text-center">Tables</h1>
+                <h1 className="display-4 py-3 text-center">My Tables</h1>
 
                 <div className="nav justify-content-center">
                     <form className="text-center">

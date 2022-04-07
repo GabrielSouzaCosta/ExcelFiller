@@ -78,6 +78,22 @@ def get_table(id):
 
     return table_schema.jsonify(table)
 
+@app.route('/create_table', methods = ['POST'])
+def create_table():
+    name = request.json['name']
+    table = Table(name)
+    add_to_db(table)
+
+    return table_schema.jsonify(table)
+
+@app.route('/delete_table', methods = ['DELETE'])
+def delete_table():
+    name = request.json['name']
+    Table.query.filter_by(name=name).delete()
+    db.session.commit()
+
+    return f"{name} table deleted."
+
 @app.route('/tables/<id>/add_column', methods = ['POST'])
 def add_column(id):
     table = Table.query.get(id)
@@ -89,14 +105,15 @@ def add_column(id):
 
     return column_schema.jsonify(column)
 
-
-@app.route('/create_table', methods = ['POST'])
-def create_table():
+@app.route('/tables/<id>/delete_column', methods = ['DELETE'])
+def delete_column(id):
+    table_id = id
     name = request.json['name']
-    table = Table(name)
-    add_to_db(table)
 
-    return table_schema.jsonify(table)
+    Column.query.filter_by(name=name, tableId=table_id).delete()
+    db.session.commit()
+
+    return f"{name} deleted from table."
 
 @app.route('/generate_file', methods = ['POST'])
 def generate_file():
