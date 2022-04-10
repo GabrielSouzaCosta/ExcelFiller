@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Navbar from "../Navbar";
-import Select from 'react-select'
-import CreatableSelect from 'react-select/creatable';
+import Select, {OnChangeValue} from 'react-select'
+import CreatableSelect, {useCreatable} from 'react-select/creatable';
 
 const options = [
     { value: 'manualtype', label: 'Manual type'},
@@ -12,14 +12,37 @@ const options = [
     { value: 'Item', label: 'Item'},
   ]
 
-const tablesOptions = [
-    { value: 'Alunos', label: 'Alunos'},
-    { value: 'Orçamento 2022', label: 'Orçamento 2022'}
-]
-
 export default function MyTables(props) {
+    const [currentTable, setCurrentTable] = useState("")
+    const [columns, setColumns] = useState([])
+
+    function getMyTablesOptions() {
+        let myTablesOptions = []
+
+        props.tablesOptions.forEach((table) =>{
+            let name = table.name
+            myTablesOptions.push({ value: name, label: name})
+        })
+
+        return myTablesOptions
+    }
+
+    function getColumns() {
+        props.tablesOptions.forEach((table) => {
+            if (table.name === currentTable) {
+                setColumns(table.columns)
+                console.log(columns)
+            }
+        })
+    }
+
+    function getTable(table) {
+        setCurrentTable(table.value)
+        getColumns()
+    }
+
     
-    return (
+    return(
         <>
             <div className="vh-100">
                 
@@ -30,7 +53,7 @@ export default function MyTables(props) {
                 <div className="nav justify-content-center">
                     <form className="text-center">
                         <div>
-                            <CreatableSelect options={tablesOptions} />
+                            <CreatableSelect options={getMyTablesOptions()} onChange={getTable} />
                         </div>
                         <button type="submit" value="generateFile" onClick={props.handleGenerate} className="btn btn-success mt-3 mb-4">Generate File</button>
                     </form>
@@ -38,7 +61,7 @@ export default function MyTables(props) {
                 
             
                 <div className="container-fluid d-flex flex-row col-12 p-0 justify-content-start align-items-center">
-                    {props.columns.map(column => {
+                    {columns.map(column => {
                         return(
                             <form key={column.id} className="p-0 m-0 me-3">
                                 <input className="text-center mb-2" defaultValue={column.name} onChange={(e) => props.handleColumnChange(e, column.id)}></input>
@@ -48,7 +71,7 @@ export default function MyTables(props) {
                         )
                     })}
                     
-                    {props.columns.length < 7 ?
+                    {columns.length < 7 ?
                             <>
                                 <form className="p-0 m-0">
                                     <input className="mb-2" placeholder="Name of the column"></input>
@@ -64,7 +87,7 @@ export default function MyTables(props) {
                 
                 <div className="col-12 p-0 justify-content-start align-items-center mt-3 ps-2" id="rowsDiv">
                     <div className="row w-100">
-                        {props.columns.map(column => {
+                        {columns.map(column => {
                             return(
                                 <div key={column.id + "_header"} className="col card text-center">
                                     {column.name}
@@ -88,4 +111,4 @@ export default function MyTables(props) {
             </div>
         </>
     )
-}
+                }

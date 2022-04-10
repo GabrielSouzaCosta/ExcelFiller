@@ -23,7 +23,7 @@ export default function Register() {
         fetch('/register', opts)
         .then(res => {
             if (res.status === 200) {
-                navigate('/');
+                navigate('/my_tables');
             }
             return res.json();
         }).then(data => {

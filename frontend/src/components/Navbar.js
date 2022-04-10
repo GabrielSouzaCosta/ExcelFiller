@@ -4,7 +4,6 @@ import { AuthContext } from "../GlobalStates";
 
 export default function Navbar (props) {
     const [token, setToken] = useContext(AuthContext);
-    console.log(token)
     
     function logout(e) {
         e.preventDefault()

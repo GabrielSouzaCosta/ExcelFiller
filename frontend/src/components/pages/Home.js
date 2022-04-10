@@ -7,6 +7,7 @@ const options = [
     { value: 'manualtype', label: 'Manual type'},
     { value: 'date', label: 'Date'},
     { value: 'time', label: 'Time'},
+    { value: 'currency', label: 'Currency'},
     { value: 'autodate', label: 'Automatic Date'},
     { value: 'autotime', label: 'Automatic Time'},
     { value: 'Item', label: 'Item'},
@@ -14,8 +15,9 @@ const options = [
 
 const tablesOptions = [
     { value: 'Alunos', label: 'Alunos'},
-    { value: 'Orçamento 2022', label: 'Orçamento 2022'}
 ]
+
+const demonstrationColumns = ['Name', 'Product', '']
 
 export default function Home(props) {
     
