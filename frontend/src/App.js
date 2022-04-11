@@ -16,24 +16,28 @@ function App() {
   const [tablesOptions, setTablesOptions] = useState([])
 
   function createTable(name) {
-    fetch(`/create_table`, {
+    fetch(`create_table`, {
       'method': 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(name)
     })
-    .then(res => res.json())
+    .then(res => {
+      res.json();
+      console.log(res)
+    })
     .catch(error => console.log(error))
   }
 
-  function handleColumnChange(e, id) {
-    e.preventDefault()
-    let clone = [...columns]
-    let item1 = {...clone[id-1]}
-    item1.name = e.target.value
-    clone[id-1] = item1
-    setColumns(clone)
+    function addColumn(column, id) {
+      fetch(`tables/${id}/add_column`, {
+        'method': 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({"name": column, "id": id})
+      }).then(res => res.json()).catch(error => console.log(error))
   }
 
   function insertRow(e) {
@@ -44,25 +48,27 @@ function App() {
       cells.push(cell)
     })
     setRows([...rows, cells])
-
     console.log(rows)
-
   }
 
-  const loadTablesOptions = useCallback(async () => {
-      let response = await fetch('/tables', {
-          'method': 'GET',
-          headers: {
-              'Content-Type': 'application/json'
-          }
-      })
-      response = await response.json()
-      setTablesOptions(response)
-  }, [tablesOptions])
-
   useEffect(() => {
-      loadTablesOptions();
-  }, [loadTablesOptions, tablesOptions])
+      async function getTables() {
+        return await fetch('tables', {
+            'method': 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(res => res.json())
+      }
+
+      (async () => {
+        const results = await getTables()
+        console.log(tablesOptions)
+        setTablesOptions(results)
+      })()
+
+      }, [])
+
 
   async function handleGenerateSubmit(event) {
     let content = {'cells': rows, 'headers': columns}
@@ -74,18 +80,19 @@ function App() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(content)
-  })
+  }).then(res => res.json()).catch(err => console.log(err))
   }
+
 
 
   return (
     <BrowserRouter>
       <AuthProvider>
       <Routes>
-          <Route path='/' element={<Home columns={columns} insertRow={insertRow} rows={rows} handleGenerate={handleGenerateSubmit} handleColumnChange={handleColumnChange} />} />
+          <Route path='/' element={<Home columns={columns} insertRow={insertRow} rows={rows} handleGenerate={handleGenerateSubmit} />} />
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
-          <Route path='/my_tables' element={<MyTables tablesOptions={tablesOptions} columns={columns} insertRow={insertRow} rows={rows} handleGenerate={handleGenerateSubmit} handleColumnChange={handleColumnChange} />} />  
+          <Route path='/my_tables' element={<MyTables tablesOptions={tablesOptions} createTable={createTable} columns={columns} insertRow={insertRow} rows={rows} addColumn={addColumn} handleGenerate={handleGenerateSubmit}  />} />  
       </Routes>
       </AuthProvider>
     </BrowserRouter>

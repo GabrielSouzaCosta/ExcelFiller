@@ -56,6 +56,14 @@ def login():
 def profile():
     return jsonify(id=current_user.id, email=current_user.email)
 
+@app.route('/create_table', methods = ['POST'])
+def create_table():
+    name = request.json
+    print(name)
+    table = Table(name)
+    add_to_db(table)
+
+    return table_schema.jsonify(table)
 
 @app.route('/tables', methods= ['GET'])
 def tables():
@@ -70,13 +78,6 @@ def get_table(id):
 
     return table_schema.jsonify(table)
 
-@app.route('/create_table', methods = ['POST'])
-def create_table():
-    name = request.json['name']
-    table = Table(name)
-    add_to_db(table)
-
-    return table_schema.jsonify(table)
 
 @app.route('/delete_table', methods = ['DELETE'])
 def delete_table():
@@ -87,15 +88,14 @@ def delete_table():
     return f"{name} table deleted."
 
 @app.route('/tables/<id>/add_column', methods = ['POST'])
-def add_column(id):
-    table = Table.query.get(id)
+def add_column(id=4):
     table_id = id
-    name = request.json['name']
-
+    name = request.json.get('name')
+    print(name)
     column = Column(name, table_id)
     add_to_db(column)
 
-    return column_schema.jsonify(column)
+    return column_schema.jsonify(column), 200
 
 @app.route('/tables/<id>/delete_column', methods = ['DELETE'])
 def delete_column(id):

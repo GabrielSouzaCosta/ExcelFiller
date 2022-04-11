@@ -22,7 +22,7 @@ export default function Navbar (props) {
                                     <li className="nav-item"><a onClick={(e) => logout(e)} className="nav-link fs-5" >Log out</a></li>
                                 </>
                                 :
-                                <li className="nav-item"><a className="nav-link fs-5" id="loginLink" href="http://localhost:3000/login">Login</a></li>
+                                <li className="nav-item"><a className="nav-link fs-5" id="loginLink" href="/login">Login</a></li>
                             }
                         </ul>
                     </div>
