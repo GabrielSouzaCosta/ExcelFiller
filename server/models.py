@@ -1,3 +1,4 @@
+from tkinter import CASCADE
 from app import app
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -36,7 +37,7 @@ class Table(db.Model):
     owner = db.Column(db.Integer, db.ForeignKey('user.id'))
     name = db.Column(db.String(30), unique=True, nullable=False)
     createdAt = db.Column(db.DateTime, default=datetime.now)
-    columns = db.relationship('Column', backref='table', lazy=True)
+    columns = db.relationship('Column', cascade='all, delete' , backref='table', lazy=True)
 
     def __init__(self, name):
         self.name = name
@@ -44,7 +45,7 @@ class Table(db.Model):
 class Column(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
-    tableId = db.Column(db.Integer, db.ForeignKey('table.id'), nullable=False)
+    tableId = db.Column(db.Integer, db.ForeignKey('table.id', ondelete="CASCADE"), nullable=True)
 
     def __init__(self, name, tableId):
         self.name = name

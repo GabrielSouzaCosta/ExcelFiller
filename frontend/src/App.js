@@ -1,5 +1,5 @@
 import './App.scss';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import Home from './components/pages/Home';
 import Login from './components/pages/Login';
 import Register from './components/pages/Register';
@@ -11,9 +11,10 @@ import {AuthProvider} from './GlobalStates';
 function App() {
 
   const [rows, setRows] = useState([])
-  const [table, setTable] = useState([])
   const [columns, setColumns] = useState([])
   const [tablesOptions, setTablesOptions] = useState([])
+  const [currentTable, setCurrentTable] = useState("")
+  const [currentId, setCurrentId] = useState()
 
   function createTable(name) {
     fetch(`create_table`, {
@@ -63,11 +64,12 @@ function App() {
 
       (async () => {
         const results = await getTables()
-        console.log(tablesOptions)
         setTablesOptions(results)
+        console.log(tablesOptions)
       })()
+      getColumns()
 
-      }, [])
+      })
 
 
   async function handleGenerateSubmit(event) {
@@ -83,16 +85,40 @@ function App() {
   }).then(res => res.json()).catch(err => console.log(err))
   }
 
+  function getColumns() {
+    tablesOptions.forEach((table) => {
+        if (table.name === currentTable) {
+            setColumns(table.columns)
+            setCurrentId(table.id)
+            console.log(columns)
+        }
+    })
+}
+
+  async function getTable(table) {
+    setCurrentTable(table.value)
+    getColumns()
+  }
+
+  function handleColumnChange(e, i) {
+    e.preventDefault()
+    let clone = [...columns]
+    let item1 = {...clone[i]}
+    item1.name = e.target.value
+    clone[i] = item1
+    setColumns(clone)
+  }
+
 
 
   return (
     <BrowserRouter>
       <AuthProvider>
       <Routes>
-          <Route path='/' element={<Home columns={columns} insertRow={insertRow} rows={rows} handleGenerate={handleGenerateSubmit} />} />
+          <Route path='/' element={<Home handleGenerate={handleGenerateSubmit} />} />
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
-          <Route path='/my_tables' element={<MyTables tablesOptions={tablesOptions} createTable={createTable} columns={columns} insertRow={insertRow} rows={rows} addColumn={addColumn} handleGenerate={handleGenerateSubmit}  />} />  
+          <Route path='/my_tables' element={<MyTables tablesOptions={tablesOptions} createTable={createTable} columns={columns} insertRow={insertRow} rows={rows} addColumn={addColumn} handleGenerate={handleGenerateSubmit} getTable={getTable} currentId={currentId} />} />  
       </Routes>
       </AuthProvider>
     </BrowserRouter>

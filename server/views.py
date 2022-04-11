@@ -81,7 +81,7 @@ def get_table(id):
 
 @app.route('/delete_table', methods = ['DELETE'])
 def delete_table():
-    name = request.json['name']
+    name = request.json.get('name')
     Table.query.filter_by(name=name).delete()
     db.session.commit()
 

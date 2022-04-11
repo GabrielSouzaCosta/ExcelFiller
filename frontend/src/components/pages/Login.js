@@ -24,7 +24,7 @@ export default function Login(props) {
         fetch('/login', opts)
         .then(res => {
             if (res.status === 200) {
-                navigate('/')
+                navigate('/my_tables')
             }
             return res.json();
         }).then(data => {
