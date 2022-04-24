@@ -59,7 +59,6 @@ def profile():
 @app.route('/create_table', methods = ['POST'])
 def create_table():
     name = request.json
-    print(name)
     table = Table(name)
     add_to_db(table)
 

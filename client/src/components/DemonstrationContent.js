@@ -1,5 +1,4 @@
 import React from 'react'
-import Navbar from "./Navbar";
 import Select from 'react-select'
 import CreatableSelect from 'react-select/creatable';
 
@@ -22,7 +21,6 @@ const demonstrationColumns = ['Product', 'Price', 'Profit', 'Sales', ]
 function DemonstrationContent() {
   return (
     <div className="vh-100">
-            <Navbar />
             <div className="container-fluid">
                 <h1 className="display-4 py-3 text-center">Tables</h1>
 

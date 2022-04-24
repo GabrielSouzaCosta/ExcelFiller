@@ -1,9 +1,10 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit'
 import tableReducer from './reducers/tableReducer'
-import loginReducer from './reducers/loginReducer'
+import authReducer from './reducers/authReducer'
+import thunk from 'redux-thunk'
 
-const rootReducer = combineReducers({tableReducer, loginReducer})
+const rootReducer = combineReducers({authReducer, tableReducer})
 
-const store = configureStore({ reducer: rootReducer })
+const store = configureStore({ reducer: rootReducer, middleware: [thunk]})
 
 export default store;

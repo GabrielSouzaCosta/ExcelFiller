@@ -1,10 +1,10 @@
 import React from 'react';
-import { logoutAction } from '../redux/actions/logoutAction';
+import { logoutAction } from '../redux/actions/auth';
 import { useDispatch, useSelector } from 'react-redux';
 
 
 function Navbar() {
-  const token = useSelector((state) => state.loginReducer.token);
+  const token = useSelector((state) => state.authReducer.token);
   const dispatch = useDispatch()
 
   function logout(e) {
@@ -34,6 +34,5 @@ function Navbar() {
   )
 }
 
-{/* <li className="nav-item"><a className="nav-link fs-5" href="/">My Tables</a></li> */}
 
 export default Navbar

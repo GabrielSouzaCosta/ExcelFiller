@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from 'react-router';
-import { loginSuccess } from '../../redux/actions/loginAction';
+import { loginSuccess } from '../../redux/actions/auth';
 import Navbar from '../Navbar'
 
 function Login() {
-  const user = useSelector((state) => state.loginReducer);
+  const user = useSelector((state) => state.authReducer);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState(user.email);
   const [password, setPassword] = useState(user.password);
-  const [token, setToken] = useState(user.token);
   const [msg, setMsg] = useState("");
 
   function handleLogin() {
@@ -56,6 +54,9 @@ function Login() {
                 <button className="my-2 btn btn-danger" type="submit" onClick={handleLogin}>Login</button>
                 
                 <p className="mt-2">Does not have an account yet? <a href="/register">Register now!</a></p>
+                <div id="passwordHelpBlock" className="form-text mb-3   ">
+                    {msg}
+                </div>
             </div>
             
         </div>
