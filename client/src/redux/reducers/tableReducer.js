@@ -1,9 +1,10 @@
 const initialState = {
-    currentId: "1",
+    currentId: sessionStorage.getItem("table_id"),     
     tables: [{value: null, label: null, id: null}],
     columns: [
         {name: "teste", type: ""}
-    ]
+    ],
+    rows: []
 }
 
 const tableReducer = (state = initialState, action) => {
@@ -17,17 +18,20 @@ const tableReducer = (state = initialState, action) => {
             }
         case "CHANGE_TABLE":
             {
+                sessionStorage.setItem("table_id", action.payload)
                 return {...state, currentId: action.payload}
             }
             
         case "CREATE_TABLE":
             {
-                return {...state, tables: [{value: action.payload.name, label: action.payload.name, id: action.payload.id}]};
+                return {...state, tables: [...state.tables, {value: action.payload.name, label: action.payload.name, id: action.payload.id}]};
             }
             
         case "DELETE_TABLE":
             {
-                return {...state, name: ""};
+                let ftables = [state.tables.filter((table) => {return table.id !== action.payload})]
+                console.log(ftables)
+                return {...state, tables: ftables, currentId: 1};
             }
         
         case "FETCH_COLUMNS":
@@ -41,6 +45,11 @@ const tableReducer = (state = initialState, action) => {
                 let id = action.payload.id
                 console.log(state.columns)
                 return {...state, columns: [...state.columns, {name: action.payload.name, type: ""}]}
+            }
+
+        case "ADD_ROW":
+            {
+                return {...state, rows: [...state.rows, action.payload]}
             }
         
         default:    

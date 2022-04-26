@@ -58,8 +58,9 @@ def profile():
 
 @app.route('/create_table', methods = ['POST'])
 def create_table():
-    name = request.json
-    table = Table(name)
+    name = request.json.get("name")
+    print(name)
+    table = Table(name) 
     add_to_db(table)
 
     return table_schema.jsonify(table)
@@ -80,11 +81,11 @@ def get_table(id):
 
 @app.route('/delete_table', methods = ['DELETE'])
 def delete_table():
-    name = request.json.get('name')
-    Table.query.filter_by(name=name).delete()
+    id = request.json.get('id')
+    Table.query.filter_by(id=id).delete()
     db.session.commit()
 
-    return f"{name} table deleted."
+    return f"{id} table deleted."
 
 @app.route('/tables/<id>/add_column', methods = ['POST'])
 def add_column(id=4):
@@ -111,8 +112,8 @@ def generate_file():
     wb = Workbook()
     ws = wb.active
     headers_excel = []
-    content = request.json
-    # print(content)
+    content = request.json.get("data")
+    print(content)
     table_headers = content['headers']
     for header in table_headers:
         headers_excel.append(header['name'])
