@@ -1,3 +1,4 @@
+from crypt import methods
 from flask import Flask, jsonify, redirect, request
 from app import app
 from openpyxl import Workbook
@@ -96,6 +97,20 @@ def add_column(id=4):
     add_to_db(column)
 
     return column_schema.jsonify(column), 200
+
+@app.route('/tables/<id>/update_column', methods = ['PUT', 'POST'])
+def update_column(id):
+    table_id = id
+    data = request.json.get('data')
+    print(data)
+    col_id = data['id']
+    new_name = data['new_name']
+    print(table_id, col_id, new_name)
+    col = Column.query.filter_by(id=col_id, tableId=table_id).one_or_none()
+    col.name = new_name         
+    db.session.commit()
+
+    return column_schema.jsonify(col), 200
 
 @app.route('/tables/<id>/delete_column', methods = ['DELETE'])
 def delete_column(id):

@@ -1,4 +1,5 @@
 import axios from "axios"
+import store from '../store';
 
 export const createTable = (table) => async (dispatch) => {
     const response = await axios.post('/create_table', {"name": table})
@@ -6,7 +7,7 @@ export const createTable = (table) => async (dispatch) => {
 }
 
 export const deleteTable = (id) => async (dispatch) => {
-    const response = await axios.delete('/delete_table', {data: {"id": id}})
+    await axios.delete('/delete_table', {data: {"id": id}})
     dispatch({type: "DELETE_TABLE", payload: id})
 }
 
@@ -35,4 +36,10 @@ export const addColumn = (name, id) => async (dispatch) => {
 
 export const addRow = (cells) => async (dispatch) => {
     dispatch({type: "ADD_ROW", payload: cells})
+}
+
+export const changeColumnName = (newName, id) => async (dispatch) => {
+    let table_id = store.getState().tableReducer.currentId
+    await axios.put(`tables/${table_id}/update_column`, {data: {"new_name": newName, "id":id}})
+    dispatch({type: "CHANGE_COLUMN_NAME", payload: {newName: newName, id: id}})
 }

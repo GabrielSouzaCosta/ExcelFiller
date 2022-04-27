@@ -51,6 +51,16 @@ const tableReducer = (state = initialState, action) => {
             {
                 return {...state, rows: [...state.rows, action.payload]}
             }
+
+        case "CHANGE_COLUMN_NAME":
+            {
+                let index = state.columns.findIndex(item => item.id == action.payload.id)
+                let clone = [...state.columns]
+                let item = {...clone[index]}
+                item.name = action.payload.newName
+                clone[index] = item
+                return {...state, columns: clone}
+            }
         
         default:    
             return state;

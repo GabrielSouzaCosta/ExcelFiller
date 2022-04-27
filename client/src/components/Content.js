@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { useDispatch, useSelector } from 'react-redux';
-import { createTable, fetchTables, fetchColumns, changeTable, addColumn, deleteTable, addRow } from '../redux/actions/tables';
+import { createTable, fetchTables, fetchColumns, changeTable, addColumn, deleteTable, addRow, changeColumnName } from '../redux/actions/tables';
 import axios from 'axios';
 
 const options = [
@@ -16,12 +16,13 @@ const options = [
   ]
 
 function Content() {
+  const tables = useSelector(state => state.tableReducer.tables)
   const currentId = useSelector(state => state.tableReducer.currentId)
   const currentTable = useSelector(state => {
       let currTable = state.tableReducer.tables.filter((table) => {
-          if (table.id == currentId) {
+          if (table.id === currentId) {
               return table
-          }
+          } 
       })
       return currTable
     })
@@ -32,16 +33,27 @@ function Content() {
   const dispatch = useDispatch()
 
   const [newCol, setNewCol] = useState("")
+  const [localColumns, setLocalColumns] = useState([])
+  let session_id = sessionStorage.getItem("table_id")
   
 
   useEffect(() => {
-      dispatch(fetchColumns(sessionStorage.getItem("table_id")))
+      if (session_id){
+          dispatch(fetchColumns(session_id))
+      }
   }, [])
 
   useEffect(() => {
-    dispatch(fetchTables())
-    dispatch(fetchColumns(currentId))
-  }, [currentId])
+      dispatch(fetchTables())
+      if (currentId != undefined && currentId != null) {
+        dispatch(fetchColumns(currentId))
+    }
+}, [currentId])
+
+
+  useEffect(() => {
+      setLocalColumns(columns)
+  }, [columns])    
 
   function createCells(e) {
     e.preventDefault()
@@ -59,7 +71,15 @@ function Content() {
     await axios.post('/generate_file', {data: content}).catch(err => console.log(err))
   }
 
-
+  function handleColumnChange(e, id) {
+    e.preventDefault()
+    let index = localColumns.findIndex(item => item.id == id)
+    let clone = [...localColumns]
+    let item = {...clone[index]}
+    item.name = e.target.value  
+    clone[index] = item
+    setLocalColumns(clone)
+  }
 
 
   return (
@@ -81,9 +101,9 @@ function Content() {
                             {columns.map((col, i) => {
                         
                                 return(
-                                    <form key={i} className="p-0 m-0 me-3">
-                                        <input className="text-center mb-2" defaultValue={col.name}></input>
-                                        <Select className=" mb-2" options={options} defaultValue={options[0]} />
+                                    <form key={i+`-${col.name}`} className="p-0 m-0 me-3">
+                                        <input tabIndex={-1} className="text-center mb-2" id={col.id} defaultValue={col.name} onMouseLeave={(e) => {setTimeout(()=>{handleColumnChange(e, e.target.id)}, 1800); if (e.target.value !== col.name) {dispatch(changeColumnName(e.target.value, e.target.id))}     }}></input>
+                                        <Select tabIndex={-1} className=" mb-2" options={options} defaultValue={options[0]} />
                                         <input className="" id={`value-${i}`}></input>
                                     </form>          
                                 )
@@ -91,26 +111,26 @@ function Content() {
                             
                             {columns.length < 7 ?
                                     <>
+                                    <button type="submit" className="me-3 btn btn-secondary h-100" onClick={(e) => {
+                                        let cells = createCells(e); 
+                                        dispatch(addRow(cells));
+                                    }}>Insert row</button>  
                                         <form className="p-0 m-0" onSubmit={(e) => console.log(e)}>
-                                            <input className="mb-2" placeholder="Name of the column" value={newCol} onChange={(e) => setNewCol(e.target.value)} ></input>
-                                                <Select className=" mb-2" options={options} defaultValue={options[0]} />
+                                            <input tabIndex={-1} className="mb-2" placeholder="Name of the column" value={newCol} onChange={(e) => setNewCol(e.target.value)} ></input>
+                                            <Select tabIndex={-1} className=" mb-2" options={options} defaultValue={options[0]} />
                                             </form>
-                                        <input className="ms-2" style={{width: '30px'}} type="image" src="plus-square.svg" alt="add column" onClick={(e) => {setNewCol(""); dispatch(addColumn(newCol, currentId))}}></input>
+                                        <input tabIndex={-1} className="ms-2" style={{width: '30px'}} type="image" src="plus-square.svg" alt="add column" onClick={(e) => {setNewCol(""); dispatch(addColumn(newCol, currentId))}}></input>
                                       
                                     </>
                                 : ""    
                             }
-                            <button type="submit" className="ms-3 btn btn-secondary h-100" onClick={(e) => {
-                                let cells = createCells(e); 
-                                dispatch(addRow(cells));
-                            }}>Insert row</button>
     
                         </div>
 
                         <div className="col-12 p-0 justify-content-start align-items-center mt-3 ps-2" id="rowsDiv">
-                            <div className="row w-100">
-                                {columns.map(col => {
-                                    return(
+                            <div style={{paddingRight:"57px"}} className="row w-100">
+                                {localColumns.map(col => {
+                                    return(         
                                         <div key={col.id + "_header"} className="col card text-center">
                                             {col.name}
                                         </div>
@@ -120,10 +140,11 @@ function Content() {
                             {rows.map(row => {
                                 return(
                                     <div className="row w-100">
-                                        {row.map(cell => {
-                                            return(<div className="col card">{cell}</div>)
+                                        {row.map(cell => {  
+                                            return(<div style={{height:"25px"}} className="col card align-middle">{cell}</div>)
                                         })}
-                                        
+                    
+                                        <input key={"row"} style={{width: '50px'}} type="image" className="ms-2" src="cancel.png" alt='delete row'></input>
                                     </div>
                                 )
                             })}
