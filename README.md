@@ -13,5 +13,5 @@
   <p>Having an account will be useful and necessary to save all your tables and saved data</p>
   <p>I intend to implement Google Login for easier registering</p>
 
-<h2>Project current State</h2>
+<h2>Project Current State</h2>
 <img src="sampleProject.png"></img>
