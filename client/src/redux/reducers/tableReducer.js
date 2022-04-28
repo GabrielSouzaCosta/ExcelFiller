@@ -43,7 +43,6 @@ const tableReducer = (state = initialState, action) => {
         case "ADD_COLUMN":
             {
                 let id = action.payload.id
-                console.log(state.columns)
                 return {...state, columns: [...state.columns, {name: action.payload.name, type: ""}]}
             }
 
@@ -60,6 +59,17 @@ const tableReducer = (state = initialState, action) => {
                 item.name = action.payload.newName
                 clone[index] = item
                 return {...state, columns: clone}
+            }
+
+        case "DELETE_COLUMN":
+            {
+                let filteredColumns = state.columns.filter((col) => {
+                    if (col.id != action.payload.id) {
+                        return col
+                    }
+                })
+                return {...state, columns: filteredColumns} 
+                
             }
         
         default:    

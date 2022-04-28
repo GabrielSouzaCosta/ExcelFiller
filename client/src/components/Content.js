@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { useDispatch, useSelector } from 'react-redux';
-import { createTable, fetchTables, fetchColumns, changeTable, addColumn, deleteTable, addRow, changeColumnName } from '../redux/actions/tables';
+import { createTable, fetchTables, fetchColumns, changeTable, addColumn, deleteTable, addRow, changeColumnName, deleteColumn } from '../redux/actions/tables';
 import axios from 'axios';
+import { current } from '@reduxjs/toolkit';
 
 const options = [
     { value: 'manualtype', label: 'Manual type'},
@@ -49,7 +50,6 @@ function Content() {
         dispatch(fetchColumns(currentId))
     }
 }, [currentId])
-
 
   useEffect(() => {
       setLocalColumns(columns)
@@ -102,24 +102,29 @@ function Content() {
                         
                                 return(
                                     <form key={i+`-${col.name}`} className="p-0 m-0 me-3">
-                                        <input tabIndex={-1} className="text-center mb-2" id={col.id} defaultValue={col.name} onMouseLeave={(e) => {setTimeout(()=>{handleColumnChange(e, e.target.id)}, 1800); if (e.target.value !== col.name) {dispatch(changeColumnName(e.target.value, e.target.id))}     }}></input>
+                                        <div className="input-group">
+                                            <input tabIndex={-1} className="text-center mb-2" id={col.id} defaultValue={col.name} onMouseLeave={(e) => {setTimeout(()=>{handleColumnChange(e, e.target.id)}, 2000); if (e.target.value !== col.name) {dispatch(changeColumnName(e.target.value, e.target.id))}}} aria-describedby="button-delete"  ></input>
+                                            <div className="input-group-append">
+                                                    <button className="btn btn-danger mb-2 mx-2" type="button" value={col.id} id="button-delete" onClick={(e) => {e.preventDefault(); dispatch(deleteColumn(e.target.value))}}>X</button>
+                                            </div>
+                                        </div>
                                         <Select tabIndex={-1} className=" mb-2" options={options} defaultValue={options[0]} />
                                         <input className="" id={`value-${i}`}></input>
                                     </form>          
                                 )
                             })}
                             
+                            <button type="submit" className="me-3 btn btn-secondary h-100" onClick={(e) => {
+                                let cells = createCells(e); 
+                                dispatch(addRow(cells));
+                            }}>Insert row</button>  
                             {columns.length < 7 ?
                                     <>
-                                    <button type="submit" className="me-3 btn btn-secondary h-100" onClick={(e) => {
-                                        let cells = createCells(e); 
-                                        dispatch(addRow(cells));
-                                    }}>Insert row</button>  
                                         <form className="p-0 m-0" onSubmit={(e) => console.log(e)}>
-                                            <input tabIndex={-1} className="mb-2" placeholder="Name of the column" value={newCol} onChange={(e) => setNewCol(e.target.value)} ></input>
+                                            <input type="text" tabIndex={-1} className="mb-2" placeholder="Name of the column" value={newCol} onChange={(e) => setNewCol(e.target.value)}  ></input>
                                             <Select tabIndex={-1} className=" mb-2" options={options} defaultValue={options[0]} />
                                             </form>
-                                        <input tabIndex={-1} className="ms-2" style={{width: '30px'}} type="image" src="plus-square.svg" alt="add column" onClick={(e) => {setNewCol(""); dispatch(addColumn(newCol, currentId))}}></input>
+                                        <input tabIndex={-1} className="ms-2" style={{width: '30px'}} type="image" src="plus-square.svg" alt="add column" onClick={(e) => {setNewCol(""); dispatch(addColumn(newCol, currentId));}}></input>
                                       
                                     </>
                                 : ""    
@@ -137,14 +142,16 @@ function Content() {
                                     )
                                 })}
                             </div>    
-                            {rows.map(row => {
+                            {rows.map((row, i) => {
                                 return(
-                                    <div className="row w-100">
+                                    <div id={`row-${i}`} className="row w-100">
                                         {row.map(cell => {  
                                             return(<div style={{height:"25px"}} className="col card align-middle">{cell}</div>)
                                         })}
                     
-                                        <input key={"row"} style={{width: '50px'}} type="image" className="ms-2" src="cancel.png" alt='delete row'></input>
+                                        <input key={"row"} style={{width: '50px'}} type="image" className="ms-2" src="cancel.png" alt='delete row' onClick={(e) => {
+                                            document.getElementById('row-'+i).remove()
+                                            }}></input>
                                     </div>
                                 )
                             })}

@@ -43,3 +43,9 @@ export const changeColumnName = (newName, id) => async (dispatch) => {
     await axios.put(`tables/${table_id}/update_column`, {data: {"new_name": newName, "id":id}})
     dispatch({type: "CHANGE_COLUMN_NAME", payload: {newName: newName, id: id}})
 }
+
+export const deleteColumn = (id) => async (dispatch) => {
+    let table_id = store.getState().tableReducer.currentId
+    await axios.delete(`tables/${table_id}/delete_column`, {data: {"column_id": id}})
+    dispatch({type: "DELETE_COLUMN", payload: {table_id: table_id, id:id}})
+}

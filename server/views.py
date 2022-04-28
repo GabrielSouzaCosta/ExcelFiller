@@ -115,12 +115,11 @@ def update_column(id):
 @app.route('/tables/<id>/delete_column', methods = ['DELETE'])
 def delete_column(id):
     table_id = id
-    name = request.json['name']
-
-    Column.query.filter_by(name=name, tableId=table_id).delete()
+    column_id = request.json.get('column_id')
+    Column.query.filter_by(tableId=table_id, id=column_id).delete()
     db.session.commit()
 
-    return f"{name} deleted from table."
+    return f"{column_id} deleted from table.", 200
 
 @app.route('/generate_file', methods = ['POST'])
 def generate_file():
