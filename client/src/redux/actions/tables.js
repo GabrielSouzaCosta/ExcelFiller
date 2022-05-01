@@ -25,7 +25,7 @@ export const changeTable = (id) => {
 
 export const fetchColumns = (id) => async (dispatch) => {
     const response = await axios.get(`/tables/${id}`)
-    dispatch({type: "FETCH_COLUMNS", payload: response.data.columns})
+    dispatch({type: "FETCH_COLUMNS", payload: response.data})
 }
 
 export const addColumn = (name, id) => async (dispatch) => {
@@ -34,18 +34,27 @@ export const addColumn = (name, id) => async (dispatch) => {
     dispatch({type: "ADD_COLUMN", payload: {name: response.data.name, id: response.data.id}})
 }
 
-export const addRow = (cells) => async (dispatch) => {
-    dispatch({type: "ADD_ROW", payload: cells})
+export const addRow = (cells) => {
+    return {
+        type: "ADD_ROW", 
+        payload: cells
+    }
 }
 
-export const changeColumnName = (newName, id) => async (dispatch) => {
-    let table_id = store.getState().tableReducer.currentId
+export const removeRow = (i) => {
+    return {
+        type: "REMOVE_ROW", payload: i
+    }
+}
+
+export const changeColumnName = (newName, id, currentId) => async (dispatch) => {
+    let table_id = currentId
     await axios.put(`tables/${table_id}/update_column`, {data: {"new_name": newName, "id":id}})
     dispatch({type: "CHANGE_COLUMN_NAME", payload: {newName: newName, id: id}})
 }
 
-export const deleteColumn = (id) => async (dispatch) => {
-    let table_id = store.getState().tableReducer.currentId
+export const deleteColumn = (id, currentId) => async (dispatch) => {
+    let table_id = currentId
     await axios.delete(`tables/${table_id}/delete_column`, {data: {"column_id": id}})
     dispatch({type: "DELETE_COLUMN", payload: {table_id: table_id, id:id}})
 }

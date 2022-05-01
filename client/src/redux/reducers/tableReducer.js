@@ -1,9 +1,6 @@
-const initialState = {
-    currentId: sessionStorage.getItem("table_id"),     
-    tables: [{value: null, label: null, id: null}],
-    columns: [
-        {name: "teste", type: ""}
-    ],
+const initialState = {  
+    tables: [],
+    columns: {},
     rows: []
 }
 
@@ -15,11 +12,6 @@ const tableReducer = (state = initialState, action) => {
                     return {value: name, label: name, id: id};
                 })
                 return {...state, tables: data}
-            }
-        case "CHANGE_TABLE":
-            {
-                sessionStorage.setItem("table_id", action.payload)
-                return {...state, currentId: action.payload}
             }
             
         case "CREATE_TABLE":
@@ -36,14 +28,13 @@ const tableReducer = (state = initialState, action) => {
         
         case "FETCH_COLUMNS":
             {
-                let data = action.payload.map(({name}) => { return{name: name, type: ""}});
-                return {...state, columns: action.payload}
+                let data = action.payload.columns.map((col) => { return{name: col.name, type: "", id: col.id}});
+                return {...state, columns: {tableId: action.payload.id, cols: data } }
             }
 
         case "ADD_COLUMN":
             {
-                let id = action.payload.id
-                return {...state, columns: [...state.columns, {name: action.payload.name, type: ""}]}
+                return {...state, columns: {...state.columns, cols: [...state.columns.cols, {name: action.payload.name, type: "", id: action.payload.id}]}}
             }
 
         case "ADD_ROW":
@@ -51,25 +42,30 @@ const tableReducer = (state = initialState, action) => {
                 return {...state, rows: [...state.rows, action.payload]}
             }
 
+        case "REMOVE_ROW":
+            {
+                let filteredRows = state.rows.filter((row, i) => {return i !== action.payload})
+                return {...state, rows: filteredRows}
+            }
+
         case "CHANGE_COLUMN_NAME":
             {
-                let index = state.columns.findIndex(item => item.id == action.payload.id)
-                let clone = [...state.columns]
+                let index = state.columns.cols.findIndex(item => item.id == action.payload.id)
+                let clone = [...state.columns.cols]
                 let item = {...clone[index]}
                 item.name = action.payload.newName
                 clone[index] = item
-                return {...state, columns: clone}
+                return {...state, columns: {...state.columns, cols: clone}}
             }
 
         case "DELETE_COLUMN":
             {
-                let filteredColumns = state.columns.filter((col) => {
+                let filteredColumns = state.columns.cols.filter((col) => {
                     if (col.id != action.payload.id) {
                         return col
                     }
                 })
-                return {...state, columns: filteredColumns} 
-                
+                return {...state, columns: {...state.columns.cols, cols: filteredColumns} }
             }
         
         default:    
