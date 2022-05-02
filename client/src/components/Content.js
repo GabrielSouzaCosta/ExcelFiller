@@ -2,18 +2,19 @@ import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { useDispatch, useSelector } from 'react-redux';
-import { createTable, fetchTables, fetchColumns, changeTable, addColumn, deleteTable, addRow, changeColumnName, deleteColumn, removeRow } from '../redux/actions/tables';
+import { createTable, fetchTables, fetchColumns, changeTable, addColumn, deleteTable, addRow, changeColumnName, deleteColumn, removeRow, selectInput } from '../redux/actions/tables';
 import axios from 'axios';
 import { current } from '@reduxjs/toolkit';
+import InputSelector from './InputSelector';
 
 const options = [
-    { value: 'manualtype', label: 'Manual type'},
+    { value: 'text', label: 'Manual type'},
+    { value: 'item', label: 'Item'},
     { value: 'date', label: 'Date'},
     { value: 'time', label: 'Time'},
     { value: 'currency', label: 'Currency'},
     { value: 'autodate', label: 'Automatic Date'},
-    { value: 'autotime', label: 'Automatic Time'},
-    { value: 'Item', label: 'Item'},
+    { value: 'autotime', label: 'Automatic Time'}
   ]
 
 function Content() {
@@ -108,8 +109,8 @@ function Content() {
                                                     <button tabIndex={-1} className="btn btn-danger mb-2 mx-2" type="button" value={col.id} id="button-delete" onClick={(e) => {e.preventDefault(); dispatch(deleteColumn(e.target.value, currentId))}}>X</button>
                                             </div>
                                         </div>
-                                        <Select tabIndex={-1} className=" mb-2" options={options} defaultValue={options[0]} />
-                                        <input className="" id={`value-${i}`}></input>
+                                        <Select tabIndex={-1} className=" mb-2" options={options} defaultValue={col.type} onChange={(e) => { { dispatch(selectInput(e, col.id)) } }} />
+                                        <InputSelector type={col.type} />
                                     </form>          
                                 )
                             })}

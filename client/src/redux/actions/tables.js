@@ -59,3 +59,10 @@ export const deleteColumn = (id, currentId) => async (dispatch) => {
     await axios.delete(`tables/${table_id}/delete_column`, {data: {"column_id": id}})
     dispatch({type: "DELETE_COLUMN", payload: {table_id: table_id, id:id}})
 }
+
+export const selectInput = (type, id) => {
+    return {
+        type: "SELECT_INPUT",
+        payload: {type: type, id: id}
+    }
+}

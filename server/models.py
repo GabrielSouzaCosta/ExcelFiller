@@ -35,7 +35,7 @@ class Table(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     owner = db.Column(db.Integer, db.ForeignKey('user.id'))
     name = db.Column(db.String(30), nullable=False)
-    createdAt = db.Column(db.DateTime, default=datetime.now)
+    createdAt = db.Column(db.DateTime, default=datetime.now())
     columns = db.relationship('Column', cascade='all, delete' , backref='table', lazy=True)
 
     def __init__(self, name, owner):
@@ -50,6 +50,19 @@ class Column(db.Model):
     def __init__(self, name, tableId):
         self.name = name
         self.tableId = tableId
+
+class Cell(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+    date_time = db.Column(db.DateTime, default=datetime.now())
+    column_id = db.Column(db.Integer, db.ForeignKey('column.id'))
+    date = db.Column(db.DateTime, default=datetime.now().strftime("%d-%m-%Y"))
+    time = db.Column(db.DateTime, default=datetime.now().strftime("%H:%M"))
+    currency = db.Column(db.String(50))
+
+    def format_date(self, format):
+        pass
+
 
 
 class UserSchema(ma.Schema):

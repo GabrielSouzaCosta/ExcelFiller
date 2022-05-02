@@ -28,7 +28,7 @@ const tableReducer = (state = initialState, action) => {
         
         case "FETCH_COLUMNS":
             {
-                let data = action.payload.columns.map((col) => { return{name: col.name, type: "", id: col.id}});
+                let data = action.payload.columns.map((col) => { return{name: col.name, type: "text", id: col.id}});
                 return {...state, columns: {tableId: action.payload.id, cols: data } }
             }
 
@@ -66,6 +66,16 @@ const tableReducer = (state = initialState, action) => {
                     }
                 })
                 return {...state, columns: {...state.columns.cols, cols: filteredColumns} }
+            }
+
+        case "SELECT_INPUT":
+            {
+                let index = state.columns.cols.findIndex(item => item.id == action.payload.id)
+                let clone = [...state.columns.cols]
+                let item = {...clone[index]}
+                item.type = action.payload.type.value
+                clone[index] = item
+                return {...state, columns: {...state.columns, cols: clone}}
             }
         
         default:    
