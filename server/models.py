@@ -34,12 +34,13 @@ class User(db.Model):
 class Table(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     owner = db.Column(db.Integer, db.ForeignKey('user.id'))
-    name = db.Column(db.String(30), unique=True, nullable=False)
+    name = db.Column(db.String(30), nullable=False)
     createdAt = db.Column(db.DateTime, default=datetime.now)
     columns = db.relationship('Column', cascade='all, delete' , backref='table', lazy=True)
 
-    def __init__(self, name):
+    def __init__(self, name, owner):
         self.name = name
+        self.owner = owner
 
 class Column(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -53,7 +54,7 @@ class Column(db.Model):
 
 class UserSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'email')
+        fields = ('id', 'email', 'owner')
 
 class ColumnSchema(ma.Schema):
     class Meta:

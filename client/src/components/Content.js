@@ -35,7 +35,7 @@ function Content() {
   const [newCol, setNewCol] = useState("")
   const [localColumns, setLocalColumns] = useState({})
   let session_id = sessionStorage.getItem("table_id")
-
+  let token = sessionStorage.getItem("token")
 
   
 
@@ -46,7 +46,7 @@ function Content() {
   }, [])
 
   useEffect(() => {
-      dispatch(fetchTables())
+      dispatch(fetchTables(token))
       if (currentId != undefined && currentId != null) {
         dispatch(fetchColumns(currentId))
     }
@@ -82,7 +82,6 @@ function Content() {
     setLocalColumns({...localColumns, cols: clone})
   }
 
-
   return (
     <div className="vh-100">
             <div className="container-fluid">
@@ -91,7 +90,7 @@ function Content() {
                 <div className="nav justify-content-center">
                     <form className="text-center">
                         <div className="d-flex ">
-                            <CreatableSelect options={tablesOptions} value={currentTable} id={currentId} onCreateOption={(e) => dispatch(createTable(e))} onChange={(e) => setCurrentId(e.id)} />
+                            <CreatableSelect options={tablesOptions} value={currentTable} id={currentId} onCreateOption={(e) => dispatch(createTable(e, token))} onChange={(e) => setCurrentId(e.id)} />
                             <button className="btn btn-danger ms-3" onClick={(e) => {e.preventDefault(); dispatch(deleteTable(currentId))}}>Delete Table</button>
                         </div>
                         <button type="submit" value="generateFile" onClick={(e) => generateFile(e)} className="btn btn-success mt-3 mb-4">Generate File</button>

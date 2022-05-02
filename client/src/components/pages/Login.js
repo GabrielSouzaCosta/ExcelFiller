@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from 'react-router';
 import { loginSuccess } from '../../redux/actions/auth';
-import Navbar from '../Navbar'
+import Navbar from '../Navbar';
+import axios from 'axios';
 
 function Login() {
   const user = useSelector((state) => state.authReducer);
@@ -13,32 +14,19 @@ function Login() {
   const [password, setPassword] = useState(user.password);
   const [msg, setMsg] = useState("");
 
-  function handleLogin() {
-    const opts = {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json'
-        },
-      body: JSON.stringify({"email": email, "password": password})
+  async function handleLogin() {
+    let response = await axios.post('/login', {"email": email, "password": password}).catch(error => console.log(error))
+    if (response.status === 200) {
+      sessionStorage.setItem("token", response.data.access_token)
+      dispatch(loginSuccess(sessionStorage.getItem("token")))
+      navigate('/')
+    } 
+    let errorMsg = response.data.msg
+    if (errorMsg) {
+        setMsg(errorMsg)
+        console.log(errorMsg)
+        throw new Error(errorMsg)
     }
-
-    fetch('/login', opts)
-    .then(res => {
-        if (res.status === 200) {
-            navigate('/')
-        }
-        return res.json();
-    }).then(data => {
-        if (data.msg) {
-            setMsg(data.msg)
-            console.log(data.msg)
-            throw new Error(data.msg)
-        }
-        sessionStorage.setItem("token", data.access_token)
-        dispatch(loginSuccess(sessionStorage.getItem("token")))
-    })
-    .catch(error => console.log(error))
-
   }
 
   return (

@@ -1,9 +1,9 @@
-from crypt import methods
+from datetime import datetime, timezone, timedelta
 from flask import Flask, jsonify, redirect, request
 from app import app
 from openpyxl import Workbook
 import webbrowser
-from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required, current_user
+from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required, current_user, get_jwt, set_access_cookies
 from models import *
 
 jwt = JWTManager(app)
@@ -17,7 +17,21 @@ def user_identity_lookup(user):
 @jwt.user_lookup_loader
 def user_lookup_callback(_jwt_header, jwt_data):
     identity = jwt_data["sub"]
-    return User.query.filter_by(email=identity).one_or_none()
+    return User.query.filter_by(email=identity).one_or_none()   
+
+@app.after_request
+def refresh_expiring_jwts(response):
+    try:
+        exp_timestamp = get_jwt()["exp"]
+        now = datetime.now(timezone.utc)
+        target_timestamp = datetime.timestamp(now + timedelta(minutes=30))
+        if target_timestamp > exp_timestamp:
+            access_token = create_access_token(identity=get_jwt_identity())
+            set_access_cookies(response, access_token)
+        return response
+    except (RuntimeError, KeyError):
+        # Case where there is not a valid JWT. Just return the original respone
+        return response
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -49,7 +63,7 @@ def login():
         msg = "Wrong email or password"
         return {"msg": msg}, 401
 
-    access_token = create_access_token(identity=email)  
+    access_token = create_access_token(identity=email)
     return jsonify(access_token=access_token), 200
 
 @app.route('/profile', methods=['GET'])
@@ -58,17 +72,21 @@ def profile():
     return jsonify(id=current_user.id, email=current_user.email)
 
 @app.route('/create_table', methods = ['POST'])
+@jwt_required()
 def create_table():
     name = request.json.get("name")
-    print(name)
-    table = Table(name) 
+    user = User.query.filter_by(email=get_jwt_identity()).one_or_none()
+    table = Table(name, owner=user.id)
     add_to_db(table)
 
     return table_schema.jsonify(table)
 
+
 @app.route('/tables', methods= ['GET'])
+@jwt_required()
 def tables():
-    all_tables = Table.query.all()
+    user = User.query.filter_by(email=get_jwt_identity()).one_or_none()
+    all_tables = Table.query.filter_by(owner=user.id)
     results = tables_schema.dump(all_tables) 
     return jsonify(results)
 
@@ -92,7 +110,6 @@ def delete_table():
 def add_column(id=4):
     table_id = id
     name = request.json.get('name')
-    print(name)
     column = Column(name, table_id)
     add_to_db(column)
 
