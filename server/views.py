@@ -1,3 +1,4 @@
+from crypt import methods
 from datetime import datetime, timezone, timedelta
 from flask import Flask, jsonify, redirect, request
 from app import app
@@ -137,6 +138,27 @@ def delete_column(id):
     db.session.commit()
 
     return f"{column_id} deleted from table.", 200
+
+
+@app.route('/add_item', methods = ['POST'])
+def add_item():
+    column_id = request.json.get('column_id')
+    name = request.json.get('name')
+    item = Cell(name=name, column_id=column_id)
+    add_to_db(item)
+
+    return cell_schema.jsonify(item), 200
+
+
+@app.route('/items/<id>', methods = ['GET'])
+def get_items(id):
+    column_id = id
+    print(column_id)
+    cells = Cell.query.filter_by(column_id=column_id)
+    results = cells_schema.dump(cells)
+
+    return jsonify(results), 200
+
 
 @app.route('/generate_file', methods = ['POST'])
 def generate_file():

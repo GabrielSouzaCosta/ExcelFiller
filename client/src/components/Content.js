@@ -110,7 +110,7 @@ function Content() {
                                             </div>
                                         </div>
                                         <Select tabIndex={-1} className=" mb-2" options={options} defaultValue={col.type} onChange={(e) => { { dispatch(selectInput(e, col.id)) } }} />
-                                        <InputSelector type={col.type} />
+                                        <InputSelector type={col.type} columnId={col.id} />
                                     </form>          
                                 )
                             })}

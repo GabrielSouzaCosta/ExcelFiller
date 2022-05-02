@@ -1,6 +1,7 @@
+from email.policy import default
 from app import app
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import date, datetime
 from flask_marshmallow  import Marshmallow
 from hmac import compare_digest
 
@@ -46,6 +47,7 @@ class Column(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     tableId = db.Column(db.Integer, db.ForeignKey('table.id', ondelete="CASCADE"), nullable=True)
+    cells = db.relationship('Cell', cascade='all, delete' , backref='column', lazy=True)
 
     def __init__(self, name, tableId):
         self.name = name
@@ -53,12 +55,14 @@ class Column(db.Model):
 
 class Cell(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
+    name = db.Column(db.String, default="")
     date_time = db.Column(db.DateTime, default=datetime.now())
     column_id = db.Column(db.Integer, db.ForeignKey('column.id'))
-    date = db.Column(db.DateTime, default=datetime.now().strftime("%d-%m-%Y"))
-    time = db.Column(db.DateTime, default=datetime.now().strftime("%H:%M"))
-    currency = db.Column(db.String(50))
+    currency = db.Column(db.String(50), default='')
+
+    def __init__(self, name, column_id):
+        self.name = name
+        self.column_id = column_id
 
     def format_date(self, format):
         pass
@@ -81,6 +85,10 @@ class TableSchema(ma.SQLAlchemySchema):
     name = ma.auto_field()
     columns = ma.Nested(ColumnSchema, many=True, exclude=['tableId']) 
 
+class CellSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'name', 'date_time' , 'currency', 'column_id')
+
 table_schema = TableSchema()
 tables_schema = TableSchema(many=True)
 
@@ -89,3 +97,5 @@ columns_schema = ColumnSchema(many=True)
 
 user_schema = UserSchema()
 
+cell_schema = CellSchema()
+cells_schema = CellSchema(many=True)
