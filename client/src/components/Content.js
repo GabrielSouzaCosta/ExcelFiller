@@ -91,7 +91,7 @@ function Content() {
                 <div className="nav justify-content-center">
                     <form className="text-center">
                         <div className="d-flex ">
-                            <CreatableSelect options={tablesOptions} value={currentTable} id={currentId} onCreateOption={(e) => dispatch(createTable(e, token))} onChange={(e) => setCurrentId(e.id)} />
+                            <CreatableSelect placeholder="Choose or Create" options={tablesOptions} value={currentTable} id={currentId} onCreateOption={(e) => dispatch(createTable(e, token))} onChange={(e) => setCurrentId(e.id)} />
                             <button className="btn btn-danger ms-3" onClick={(e) => {e.preventDefault(); dispatch(deleteTable(currentId))}}>Delete Table</button>
                         </div>
                         <button type="submit" value="generateFile" onClick={(e) => generateFile(e)} className="btn btn-success mt-3 mb-4">Generate File</button>
