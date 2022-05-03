@@ -1,28 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import CreatableSelect from 'react-select/creatable';
-import CurrencyInput from 'react-currency-input-field'
+import CurrencyInput from 'react-currency-input-field';
 
 
 function InputSelector(props) {
-    
+
     let [currentItem, setCurrentItem] = useState("");
     let [items, setItems] = useState([]);
-    let [currencyValue, setCurrencyValue] = useState("")
+    let [currencyValue, setCurrencyValue] = useState("");
 
     function getDate() {
-        const options = {year: 'numeric', month: '2-digit', day: '2-digit' }
+        const options = {year: 'numeric', month: '2-digit', day: '2-digit' };
         let current = new Date();
-        let date = current.toLocaleDateString('pt-BR').split('/')
-        date = date.reverse().join('-')
-        console.log(date)
-        return date
+        let date = current.toLocaleDateString('pt-BR').split('/');
+        date = date.reverse().join('-');
+        return date;
     }
 
     function getTime() {
         let current = new Date();
-        let time = current.toLocaleTimeString('pt-BR')
-        return time
+        let time = current.toLocaleTimeString('pt-BR');
+        return time;
     }
         
     async function getItems(column_id) {
@@ -38,50 +37,69 @@ function InputSelector(props) {
         getItems(props.columnId);
     }
 
+    async function deleteItem(e, currentItem) {
+        e.preventDefault()
+        console.log(props.columnId, currentItem.value)
+        await axios.delete('/delete_item', {data: {"column_id": props.columnId, "name": currentItem.value} } );
+        setCurrentItem("")
+        getItems(props.columnId)
+    }   
+
     useEffect(() => {
         getItems(props.columnId);
     }, [])
 
+    function getCurrentItem() {
+        console.log(currentItem)
+    }
 
 
     switch(props.type) {
         case "text":
             {
-                return ( <input type={props.type} ></input> )
+                return ( <input id={`value-${props.index}`} type={props.type} value={currentItem} onChange={(e) => {setCurrentItem(e.target.value)}}></input> )
             }
 
         case "item":
             {
                 return (<>
+                <div className="input-group">
                     <CreatableSelect options={items} value={currentItem} onChange={(e) => {setCurrentItem(e)}} onCreateOption={(e) => {addItem(e); }}  placeholder="Select or Create..."/>
+                    {(currentItem !== "") ? 
+                    <div className="input-group-append" >
+                        <input tabIndex={-1} className="btn px-0 ms-1" type="image" id="button-delete" src='delete_item.png' onClick={(e) => {deleteItem(e, currentItem)}}></input>
+                    </div> : ""
+                    }
+                    <input id={`value-${props.index}`} className="d-none" value={currentItem.value}></input>
+                </div>
                 </>)
             }
 
         case "autodate":
             {
 
-                return (<input type="date" defaultValue={getDate()} ></input>)
+                return (<input id={`value-${props.index}`} type="date" defaultValue={getDate()} ></input>)
             }
                 
         case "autotime":
             {
-                return (<input type="time"  defaultValue={getTime()}></input>)
+                return (<input id={`value-${props.index}`} type="time"  defaultValue={getTime()}></input>)
             }
 
         case "date":
             {
-                return ( <input type={props.type}></input>)
+                return ( <input id={`value-${props.index}`} type={props.type}></input>)
             }
 
         case "time":
             {
-                return (<input type={props.type}></input>)
+                return (<input id={`value-${props.index}`} type={props.type}></input>)
             }
 
         case "currency":
             {
                 return (<>
-                    <CurrencyInput placeholder='$100,000,000' value={currencyValue} onValueChange={(e) =>setCurrencyValue(e)} prefix='R$' step={50} disableGroupSeparators decimalSeparator="," fixedDecimalLength={2}/>
+                    <CurrencyInput id={`value-${props.index}`} placeholder='$100,000,000' value={currencyValue} onValueChange={(e) =>setCurrencyValue(e)} prefix='R$' step={50} disableGroupSeparators decimalSeparator="," fixedDecimalLength={2}/>
                 </>)
             }
 

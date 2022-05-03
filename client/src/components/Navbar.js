@@ -18,14 +18,14 @@ function Navbar() {
     <>
                 <nav className="navbar navbar-expand-lg navbar-light bg-light sticky-top w-100 justify-content-center">
                     <div className="container-fluid">
-                        <a className="navbar-brand display-2 fs-2" href="/">ExcelFiller</a>
+                        <a tabIndex={-1} className="navbar-brand display-2 fs-2" href="/">ExcelFiller</a>
                         <ul className="nav navbar justify-content-center" >
                             {(token && token !== "" && token !== undefined) ?
                                 <>
-                                    <li  className="nav-item"><a href="/" onClick={(e) => logout(e)} className="nav-link fs-5" >Log out</a></li>
+                                    <li className="nav-item"><a tabIndex={-1} href="/" onClick={(e) => logout(e)} className="nav-link fs-5" >Log out</a></li>
                                 </>
                                 :
-                                <li className="nav-item"><a className="nav-link fs-5" id="loginLink" href="/login">Login</a></li>
+                                <li tabIndex={-1} className="nav-item"><a tabIndex={-1} className="nav-link fs-5" id="loginLink" href="/login">Login</a></li>
                             }
                         </ul>
                     </div>

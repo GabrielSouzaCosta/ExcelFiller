@@ -29,12 +29,14 @@ function Content() {
     })
   const tablesOptions = useSelector(state => state.tableReducer.tables)
   const columns = useSelector(state => state.tableReducer.columns)
+  const currentRow = useSelector(state => state.tableReducer.currentRow)
   const rows = useSelector(state => state.tableReducer.rows)
-
+  
   const dispatch = useDispatch()
-
+  
   const [newCol, setNewCol] = useState("")
   const [localColumns, setLocalColumns] = useState({})
+  const [insert, setInsert] = useState(false)
   let session_id = sessionStorage.getItem("table_id")
   let token = sessionStorage.getItem("token")
 
@@ -57,18 +59,10 @@ function Content() {
       setLocalColumns(columns)
   }, [columns])    
 
-  function createCells(e) {
-    e.preventDefault()
-    const cells = []
-    columns.cols.forEach((column, i) => {
-      let cell = document.getElementById(`value-${i}`).value
-      cells.push(cell)
-    })
-    return cells
-  }
 
   async function generateFile(e) {
-    let content = {'cells': rows, 'headers': columns.cols}
+    let headers = columns.cols.map((col) => {return col.name})
+    let content = {'cells': rows, 'headers': headers}
     e.preventDefault()
     await axios.post('/generate_file', {data: content}).catch(err => console.log(err))
   }
@@ -81,6 +75,18 @@ function Content() {
     item.name = e.target.value  
     clone[index] = item
     setLocalColumns({...localColumns, cols: clone})
+  }
+
+  function createCells(e) {
+    e.preventDefault()
+    const cells = []
+    let cell = ""
+    columns.cols.forEach((column, i) => {
+        let cell = document.getElementById(`value-${i}`).value
+    
+      cells.push(cell)
+    })
+    return cells
   }
 
   return (
@@ -106,11 +112,11 @@ function Content() {
                                         <div className="input-group">
                                             <input tabIndex={-1} className="text-center mb-2" id={col.id} defaultValue={col.name} onMouseLeave={(e) => { if (e.target.value !== col.name) {setTimeout(()=>{ dispatch(changeColumnName(e.target.value, e.target.id, currentId)) }, 1000)}; handleColumnChange(e, e.target.id)}} aria-describedby="button-delete"  ></input>
                                             <div className="input-group-append" >
-                                                    <button tabIndex={-1} className="btn btn-danger mb-2 mx-2" type="button" value={col.id} id="button-delete" onClick={(e) => {e.preventDefault(); dispatch(deleteColumn(e.target.value, currentId))}}>X</button>
+                                                    <button className="btn btn-danger mb-2 mx-2" type="button" value={col.id} id="button-delete" onClick={(e) => {e.preventDefault(); dispatch(deleteColumn(e.target.value, currentId))}}>X</button>
                                             </div>
                                         </div>
                                         <Select tabIndex={-1} className=" mb-2" options={options} defaultValue={col.type} onChange={(e) => { { dispatch(selectInput(e, col.id)) } }} />
-                                        <InputSelector type={col.type} columnId={col.id} />
+                                        <InputSelector type={col.type} columnId={col.id} index={i} />
                                     </form>          
                                 )
                             })}
@@ -118,7 +124,7 @@ function Content() {
                              : ""}
                             
                             <button type="submit" className="me-3 btn btn-secondary h-100" onClick={(e) => {
-                                let cells = createCells(e); 
+                                let cells = createCells(e);
                                 dispatch(addRow(cells));
                             }}>Insert row</button>
                             {(columns.cols) ? <>
@@ -151,20 +157,20 @@ function Content() {
                              : ""}
                             
                                 
-                            </div>    
-                            {rows.map((row, i) => {
-                                return(
-                                    <div key={`row ${i}`} id={`row-${i}`} className="row w-100">
-                                        {row.map((cell, index) => {  
-                                            return(<div key={`cell-${index}`} style={{height:"25px"}} className="col card align-middle">{cell}</div>)
-                                        })}
-                    
-                                        <input key={"delete "+i} style={{width: '50px'}} type="image" className="ms-2" src="cancel.png" alt='delete row' onClick={(e) => {
-                                            dispatch(removeRow(i));
-                                            }}></input>
-                                    </div>
-                                )
-                            })}
+                            </div>
+                                    {rows.map((row, i) => {
+                                        return(
+                                            <div key={`row ${i}`} id={`row-${i}`} className="row w-100">
+                                                {row.map((cell, index) => {  
+                                                    return(<div key={`cell-${index}`} style={{height:"25px"}} className="col card align-middle">{cell}</div>)
+                                                })}
+                            
+                                                <input key={"delete "+i} style={{width: '50px'}} type="image" className="ms-2" src="cancel.png" alt='delete row' onClick={(e) => {
+                                                    dispatch(removeRow(i));
+                                                    }}></input>
+                                            </div>
+                                        )
+                                    })} 
                         </div>
                 
         

@@ -150,11 +150,21 @@ def add_item():
 
     return cell_schema.jsonify(item), 200
 
+@app.route('/delete_item', methods = ['DELETE'])
+def delete_item():
+    print(request.json)
+    column_id = request.json.get('column_id')
+    name = request.json.get('name')
+    item = Cell.query.filter_by(name=name, column_id=column_id).first()
+    db.session.delete(item)
+    db.session.commit()
+
+    return cell_schema.jsonify(item), 200
+
 
 @app.route('/items/<id>', methods = ['GET'])
 def get_items(id):
     column_id = id
-    print(column_id)
     cells = Cell.query.filter_by(column_id=column_id)
     results = cells_schema.dump(cells)
 
@@ -170,7 +180,7 @@ def generate_file():
     print(content)
     table_headers = content['headers']
     for header in table_headers:
-        headers_excel.append(header['name'])
+        headers_excel.append(header)
     print(headers_excel)
     table_cells = content['cells']
     ws.append(headers_excel)
