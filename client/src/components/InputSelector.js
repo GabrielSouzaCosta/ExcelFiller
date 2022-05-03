@@ -5,7 +5,7 @@ import CurrencyInput from 'react-currency-input-field';
 
 
 function InputSelector(props) {
-
+    let [currentText, setCurrentText] = useState("");
     let [currentItem, setCurrentItem] = useState("");
     let [items, setItems] = useState([]);
     let [currencyValue, setCurrencyValue] = useState("");
@@ -57,7 +57,7 @@ function InputSelector(props) {
     switch(props.type) {
         case "text":
             {
-                return ( <input id={`value-${props.index}`} type={props.type} value={currentItem} onChange={(e) => {setCurrentItem(e.target.value)}}></input> )
+                return ( <input id={`value-${props.index}`} type={props.type} value={currentText} onChange={(e) => {setCurrentText(e.target.value)}}></input> )
             }
 
         case "item":

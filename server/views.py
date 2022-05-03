@@ -135,7 +135,8 @@ def update_column(id):
 def delete_column(id):
     table_id = id
     column_id = request.json.get('column_id')
-    Column.query.filter_by(tableId=table_id, id=column_id).delete()
+    column = Column.query.filter_by(tableId=table_id, id=column_id).first()
+    db.session.delete(column)
     db.session.commit()
 
     return f"{column_id} deleted from table.", 200
