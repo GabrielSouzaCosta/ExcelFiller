@@ -14,4 +14,4 @@
   <p>I intend to implement Google Login for easier registering</p>
 
 <h2>Project Current State</h2>
-<img src="sampleProject.png"></img>
+<img src="./client/public/sampleProject.png"></img>
