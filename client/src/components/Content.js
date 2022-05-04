@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { useDispatch, useSelector } from 'react-redux';
-import { createTable, fetchTables, fetchColumns, changeTable, addColumn, deleteTable, addRow, changeColumnName, deleteColumn, removeRow, selectInput } from '../redux/actions/tables';
+import { createTable, fetchTables, fetchColumns, addColumn, deleteTable, addRow, changeColumnName, deleteColumn, removeRow, selectInput } from '../redux/actions/tables';
 import axios from 'axios';
-import { current } from '@reduxjs/toolkit';
 import InputSelector from './InputSelector';
 
 const options = [
@@ -24,25 +23,25 @@ function Content() {
           if (table.id === currentId) {
               return table
           } 
+          return null
       })
       return currTable
     })
   const tablesOptions = useSelector(state => state.tableReducer.tables)
   const columns = useSelector(state => state.tableReducer.columns)
-  const currentRow = useSelector(state => state.tableReducer.currentRow)
   const rows = useSelector(state => state.tableReducer.rows)
   
   const dispatch = useDispatch()
   
   const [newCol, setNewCol] = useState("")
   const [localColumns, setLocalColumns] = useState({})
-  const [insert, setInsert] = useState(false)
   let session_id = sessionStorage.getItem("table_id")
-  let token = sessionStorage.getItem("token")
+  let [token, setToken] = useState(sessionStorage.getItem("token"))
 
   
 
   useEffect(() => {
+      setToken(sessionStorage.getItem("token"))
       if (session_id){
           dispatch(fetchColumns(session_id))
       }
@@ -50,7 +49,7 @@ function Content() {
 
   useEffect(() => {
       dispatch(fetchTables(token))
-      if (currentId != undefined && currentId != null) {
+      if (currentId !== undefined && currentId !== null) {
         dispatch(fetchColumns(currentId))
     }
 }, [currentId])
@@ -69,7 +68,7 @@ function Content() {
 
   function handleColumnChange(e, id) {
     e.preventDefault()
-    let index = localColumns.cols.findIndex(item => item.id == id)
+    let index = localColumns.cols.findIndex(item => item.id === id)
     let clone = [...localColumns.cols]
     let item = clone[index]
     item.name = e.target.value  
@@ -80,25 +79,23 @@ function Content() {
   function createCells(e) {
     e.preventDefault()
     const cells = []
-    let cell = ""
     columns.cols.forEach((column, i) => {
         let cell = document.getElementById(`value-${i}`).value
-    
-      cells.push(cell)
+        cells.push(cell)
     })
     return cells
   }
 
   return (
-    <div className="vh-100">
+    <div style={{backgroundColor: "#cbd4c2"}} className="vh-100">
             <div className="container-fluid">
-                <h1 className="display-4 py-3 text-center">Tables</h1>
+                <h1 className="display-4 pb-2 pt-5 text-center">Tables</h1>
 
                 <div className="nav justify-content-center">
                     <form className="text-center">
                         <div className="d-flex ">
                             <CreatableSelect placeholder="Choose or Create" options={tablesOptions} value={currentTable} id={currentId} onCreateOption={(e) => dispatch(createTable(e, token))} onChange={(e) => setCurrentId(e.id)} />
-                            <button className="btn btn-danger ms-3" onClick={(e) => {e.preventDefault(); dispatch(deleteTable(currentId))}}>Delete Table</button>
+                            <button className="btn btn-danger ms-3" onClick={(e) => {dispatch(deleteTable(currentId)); dispatch(fetchTables(token)); }}>Delete Table</button>
                         </div>
                         <button type="submit" value="generateFile" onClick={(e) => generateFile(e)} className="btn btn-success mt-3 mb-4">Generate File</button>
                     </form>
@@ -110,31 +107,32 @@ function Content() {
                                 return(
                                     <form key={i+`-${col.name}`} className="p-0 m-0 me-3">
                                         <div className="input-group">
-                                            <input tabIndex={-1} className="text-center mb-2" id={col.id} defaultValue={col.name} onMouseLeave={(e) => { if (e.target.value !== col.name) {setTimeout(()=>{ dispatch(changeColumnName(e.target.value, e.target.id, currentId)) }, 1000)}; handleColumnChange(e, e.target.id)}} aria-describedby="button-delete"  ></input>
+                                            <input tabIndex={-1} className="form-control form-control-sm text-center mb-2" id={col.id} defaultValue={col.name} onMouseLeave={(e) => { if (e.target.value !== col.name) {setTimeout(()=>{ dispatch(changeColumnName(e.target.value, e.target.id, currentId)) }, 1000)}; handleColumnChange(e, e.target.id)}} aria-describedby="button-delete"  ></input>
                                             <div className="input-group-append" >
-                                                    <button className="btn btn-danger mb-2 mx-2" type="button" value={col.id} id="button-delete" onClick={(e) => {e.preventDefault(); dispatch(deleteColumn(e.target.value, currentId))}}>X</button>
+                                            <input tabIndex={-1} className="btn px-0 mb-2 ms-1" type="image" alt='delete-column' value={col.id} id="button-delete" src='delete_column.png' onClick={(e) => {e.preventDefault(); dispatch(deleteColumn(e.target.value, currentId))}}></input> 
                                             </div>
                                         </div>
-                                        <Select tabIndex={-1} className=" mb-2" options={options} defaultValue={col.type} onChange={(e) => { { dispatch(selectInput(e, col.id)) } }} />
+                                        <Select tabIndex={-1} className=" mb-2" options={options} defaultValue={col.type} onChange={(e) => { dispatch(selectInput(e, col.id)) }} />
                                         <InputSelector type={col.type} columnId={col.id} index={i} />
                                     </form>          
                                 )
                             })}
-                            </>
-                             : ""}
-                            
-                            <button type="submit" className="me-3 btn btn-secondary h-100" onClick={(e) => {
+                            <button type="submit" style={{backgroundColor: "#721817"}} className="me-3 btn text-light h-100" onClick={(e) => {
                                 let cells = createCells(e);
                                 dispatch(addRow(cells));
                             }}>Insert row</button>
+                            </>
+                             : <p className='display-5 mt-5 m-auto'>"Create a table or select one..." &#128522;</p>}
+                            
+                            
                             {(columns.cols) ? <>
                                 {columns.cols.length < 7 ?
                                         <>
                                             <form className="p-0 m-0" onSubmit={(e) => console.log(e)}>
-                                                <input type="text" tabIndex={-1} className="mb-2" placeholder="Name of the column" value={newCol} onChange={(e) => setNewCol(e.target.value)}  ></input>
-                                                <Select tabIndex={-1} className=" mb-2" options={options} defaultValue={options[0]} />
+                                                <input type="text" tabIndex={-1} className="form-control form-control-md text-center mb-2" placeholder="Name of the column" value={newCol} onChange={(e) => setNewCol(e.target.value)}  ></input>
+                                                <Select tabIndex={-1} className="mb-2" options={options} defaultValue={options[0]} />
                                                 </form>
-                                            <input tabIndex={-1} className="ms-2" style={{width: '30px'}} type="image" src="plus-square.svg" alt="add column" onClick={(e) => {setNewCol(""); dispatch(addColumn(newCol, currentId));}}></input>
+                                            <input className="ms-2" style={{width: '30px'}} type="image" src="plus-square.svg" alt="add column" onClick={(e) => {setNewCol(""); dispatch(addColumn(newCol, currentId));}}></input>
                                         
                                         </>
                                     : ""    

@@ -11,7 +11,6 @@ function InputSelector(props) {
     let [currencyValue, setCurrencyValue] = useState("");
 
     function getDate() {
-        const options = {year: 'numeric', month: '2-digit', day: '2-digit' };
         let current = new Date();
         let date = current.toLocaleDateString('pt-BR').split('/');
         date = date.reverse().join('-');
@@ -32,7 +31,7 @@ function InputSelector(props) {
     }
 
     async function addItem(name) {
-        let response = await axios.post('/add_item', {"column_id": props.columnId, "name": name});
+        await axios.post('/add_item', {"column_id": props.columnId, "name": name});
         setCurrentItem({value: name, label: name});
         getItems(props.columnId);
     }
@@ -49,15 +48,10 @@ function InputSelector(props) {
         getItems(props.columnId);
     }, [])
 
-    function getCurrentItem() {
-        console.log(currentItem)
-    }
-
-
     switch(props.type) {
         case "text":
             {
-                return ( <input id={`value-${props.index}`} type={props.type} value={currentText} onChange={(e) => {setCurrentText(e.target.value)}}></input> )
+                return ( <input id={`value-${props.index}`} className="form-control form-control-sm text-center mb-2" type={props.type} value={currentText} onChange={(e) => {setCurrentText(e.target.value)}}></input> )
             }
 
         case "item":
@@ -67,7 +61,7 @@ function InputSelector(props) {
                     <CreatableSelect options={items} value={currentItem} onChange={(e) => {setCurrentItem(e)}} onCreateOption={(e) => {addItem(e); }}  placeholder="Select or Create..."/>
                     {(currentItem !== "") ? 
                     <div className="input-group-append" >
-                        <input tabIndex={-1} className="btn px-0 ms-1" type="image" id="button-delete" src='delete_item.png' onClick={(e) => {deleteItem(e, currentItem)}}></input>
+                        <input tabIndex={-1} className="btn px-0 ms-1" type="image" alt='delete-item' id="button-delete" src='delete_item.png' onClick={(e) => {deleteItem(e, currentItem)}}></input>
                     </div> : ""
                     }
                     <input id={`value-${props.index}`} className="d-none" value={currentItem.value}></input>
@@ -99,7 +93,7 @@ function InputSelector(props) {
         case "currency":
             {
                 return (<>
-                    <CurrencyInput id={`value-${props.index}`} placeholder='$100,000,000' value={currencyValue} onValueChange={(e) =>setCurrencyValue(e)} prefix='R$' step={50} disableGroupSeparators decimalSeparator="," fixedDecimalLength={2}/>
+                    <CurrencyInput id={`value-${props.index}`} className={"form-control form-control-sm mb-2"} placeholder='$100,000,000' value={currencyValue} onValueChange={(e) =>setCurrencyValue(e)} prefix='R$' step={50} disableGroupSeparators decimalSeparator="," fixedDecimalLength={2}/>
                 </>)
             }
 

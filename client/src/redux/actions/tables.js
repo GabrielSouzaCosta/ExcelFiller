@@ -1,8 +1,6 @@
 import axios from "axios"
-import store from '../store';
 
 export const createTable = (table, token) => async (dispatch) => {
-    console.log(token)
     const response = await axios.post('/create_table', {"name": table}, {headers: {"Authorization": "Bearer "+ token} })
     dispatch({type: "CREATE_TABLE", payload: {name: response.data.name, id: response.data.id}})
 }
@@ -16,13 +14,6 @@ export const fetchTables = (token) => async (dispatch) => {
         const response = await axios.get('/tables', {headers: {"Authorization": "Bearer "+ token} } );
         dispatch({type: "FETCH_TABLES", payload: response.data})
     };
-
-export const changeTable = (id) => {
-    return {
-        type: "CHANGE_TABLE",
-        payload: id
-    }
-}
 
 export const fetchColumns = (id) => async (dispatch) => {
     const response = await axios.get(`/tables/${id}`)

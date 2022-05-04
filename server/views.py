@@ -1,5 +1,6 @@
 from crypt import methods
 from datetime import datetime, timezone, timedelta
+from os import access
 from flask import Flask, jsonify, redirect, request
 from app import app
 from openpyxl import Workbook
@@ -53,7 +54,7 @@ def register():
     access_token = create_access_token(identity=email)
     print(access_token)
 
-    return user_schema.jsonify(user), 200
+    return jsonify(access_token=access_token), 200
 
 @app.route('/login', methods=['POST'])
 def login():

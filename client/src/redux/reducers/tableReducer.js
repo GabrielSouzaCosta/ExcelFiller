@@ -50,7 +50,7 @@ const tableReducer = (state = initialState, action) => {
 
         case "CHANGE_COLUMN_NAME":
             {
-                let index = state.columns.cols.findIndex(item => item.id == action.payload.id)
+                let index = state.columns.cols.findIndex(item => item.id === parseInt(action.payload.id))
                 let clone = [...state.columns.cols]
                 let item = {...clone[index]}
                 item.name = action.payload.newName
@@ -61,16 +61,17 @@ const tableReducer = (state = initialState, action) => {
         case "DELETE_COLUMN":
             {
                 let filteredColumns = state.columns.cols.filter((col) => {
-                    if (col.id != action.payload.id) {
+                    if (col.id !== parseInt(action.payload.id)) {
                         return col
                     }
+                    return null
                 })
                 return {...state, columns: {...state.columns.cols, cols: filteredColumns} }
             }
 
         case "SELECT_INPUT":
             {
-                let index = state.columns.cols.findIndex(item => item.id == action.payload.id)
+                let index = state.columns.cols.findIndex(item => item.id === parseInt(action.payload.id) )
                 let clone = [...state.columns.cols]
                 let item = {...clone[index]}
                 item.type = action.payload.type.value

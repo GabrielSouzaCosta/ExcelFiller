@@ -1,6 +1,7 @@
 import React from 'react';
 import { logoutAction } from '../redux/actions/auth';
 import { useDispatch, useSelector } from 'react-redux';
+import { NavLink } from 'react-router-dom'
 
 
 function Navbar() {
@@ -16,16 +17,18 @@ function Navbar() {
 
   return (
     <>
-                <nav className="navbar navbar-expand-lg navbar-light bg-light sticky-top w-100 justify-content-center">
+                <nav style={{backgroundColor: "#172F2A"}} className="navbar navbar-expand-lg navbar-dark sticky-top w-100 justify-content-center">
                     <div className="container-fluid">
                         <a tabIndex={-1} className="navbar-brand display-2 fs-2" href="/">ExcelFiller</a>
                         <ul className="nav navbar justify-content-center" >
                             {(token && token !== "" && token !== undefined) ?
                                 <>
-                                    <li className="nav-item"><a tabIndex={-1} href="/" onClick={(e) => logout(e)} className="nav-link fs-5" >Log out</a></li>
+                                    <li className="nav-item"><a className="nav-link display-5 fs-3 link-light" tabIndex={-1} href="/" onClick={(e) => logout(e)} >Log out</a></li>
                                 </>
-                                :
-                                <li tabIndex={-1} className="nav-item"><a tabIndex={-1} className="nav-link fs-5" id="loginLink" href="/login">Login</a></li>
+                                : 
+                                <>
+                                  <NavLink to="/login" className={"nav-link display-5 fs-3 link-light"}>Login</NavLink>
+                                </>
                             }
                         </ul>
                     </div>
