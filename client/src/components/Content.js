@@ -63,7 +63,7 @@ function Content() {
     let headers = columns.cols.map((col) => {return col.name})
     let content = {'cells': rows, 'headers': headers}
     e.preventDefault()
-    await axios.post('/generate_file', {data: content}).catch(err => console.log(err))
+    await axios.post('https://lit-bastion-94694.herokuapp.com/generate_file', {data: content}).catch(err => console.log(err))
   }
 
   function handleColumnChange(e, id) {
@@ -128,7 +128,7 @@ function Content() {
                             {(columns.cols) ? <>
                                 {columns.cols.length < 7 ?
                                         <>
-                                            <form className="p-0 m-0" onSubmit={(e) => console.log(e)}>
+                                            <form className="p-0 m-0">
                                                 <input type="text" tabIndex={-1} className="form-control form-control-md text-center mb-2" placeholder="Name of the column" value={newCol} onChange={(e) => setNewCol(e.target.value)}  ></input>
                                                 <Select tabIndex={-1} className="mb-2" options={options} defaultValue={options[0]} />
                                                 </form>

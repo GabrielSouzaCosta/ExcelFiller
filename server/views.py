@@ -41,7 +41,6 @@ def register():
     password = request.json.get('password')
     user_exists = User.query.filter_by(email=email).one_or_none()
     if user_exists:
-        print(user_exists)
         msg = "The user already exists"
         return {"msg": msg}, 401
 
@@ -52,7 +51,6 @@ def register():
     user = User(email, password)
     add_to_db(user)
     access_token = create_access_token(identity=email)
-    print(access_token)
 
     return jsonify(access_token=access_token), 200
 
@@ -122,10 +120,8 @@ def add_column(id=4):
 def update_column(id):
     table_id = id
     data = request.json.get('data')
-    print(data)
     col_id = data['id']
     new_name = data['new_name']
-    print(table_id, col_id, new_name)
     col = Column.query.filter_by(id=col_id, tableId=table_id).one_or_none()
     col.name = new_name         
     db.session.commit()
@@ -154,7 +150,6 @@ def add_item():
 
 @app.route('/delete_item', methods = ['DELETE'])
 def delete_item():
-    print(request.json)
     column_id = request.json.get('column_id')
     name = request.json.get('name')
     item = Cell.query.filter_by(name=name, column_id=column_id).first()
@@ -179,11 +174,9 @@ def generate_file():
     ws = wb.active
     headers_excel = []
     content = request.json.get("data")
-    print(content)
     table_headers = content['headers']
     for header in table_headers:
         headers_excel.append(header)
-    print(headers_excel)
     table_cells = content['cells']
     ws.append(headers_excel)
     for row in table_cells:

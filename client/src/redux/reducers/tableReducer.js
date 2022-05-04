@@ -22,7 +22,6 @@ const tableReducer = (state = initialState, action) => {
         case "DELETE_TABLE":
             {
                 let ftables = [state.tables.filter((table) => {return table.id !== action.payload})]
-                console.log(ftables)
                 return {...state, tables: ftables, currentId: 1};
             }
         

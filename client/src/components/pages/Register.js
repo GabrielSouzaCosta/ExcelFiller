@@ -24,16 +24,14 @@ function Register() {
       setMsg("Please create a password.")
       return
     }
-    await axios.post('/register', {"email": email, "password": password})
+    await axios.post('https://lit-bastion-94694.herokuapp.com/register', {"email": email, "password": password})
     .then(res => {if (res.status === 200) {
-      console.log(res)
       sessionStorage.setItem("token", res.data.access_token)
       dispatch(registerSuccess(sessionStorage.getItem("token")))
       navigate('/')
     }})
     .catch(err => {
       if (err.response.status === 401) {
-        console.log(err.response)
         let msgErr = err.response.data.msg
         setMsg(msgErr)
         throw new Error(msgErr)
@@ -47,7 +45,6 @@ function Register() {
     let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if(!email.match(regex)){
         setMsg("Please provide a valid email");
-        console.log(msg)
         return false;
     }
     return true;

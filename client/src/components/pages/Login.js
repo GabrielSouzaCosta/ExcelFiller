@@ -24,9 +24,8 @@ export default function Login() {
       setMsg("Please create a password.")
       return
     }
-    await axios.post('/login', {"email": email, "password": password})
+    await axios.post('https://lit-bastion-94694.herokuapp.com/login', {"email": email, "password": password})
     .then(res => {if (res.status === 200) {
-      console.log(res.data.access_token)
       sessionStorage.setItem("token", res.data.access_token)
       dispatch(loginSuccess(sessionStorage.getItem("token")))
       navigate('/')
@@ -48,7 +47,6 @@ export default function Login() {
     let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if(!email.match(regex)){
         setMsg("Please provide a valid email");
-        console.log(msg)
         return false;
     }
     return true;

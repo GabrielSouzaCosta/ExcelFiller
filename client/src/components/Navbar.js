@@ -11,7 +11,6 @@ function Navbar() {
   function logout(e) {
     e.preventDefault()
     sessionStorage.removeItem("token")
-    console.log(token)
     dispatch(logoutAction())
 }
 

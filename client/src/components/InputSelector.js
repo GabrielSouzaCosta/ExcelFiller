@@ -24,22 +24,21 @@ function InputSelector(props) {
     }
         
     async function getItems(column_id) {
-        let response = await axios.get(`items/${column_id}`);
+        let response = await axios.get(`https://lit-bastion-94694.herokuapp.com/items/${column_id}`);
         let data = response.data;
         let formatItems = data.map(({name}) => {return {value: name, label: name}});
         setItems(formatItems);
     }
 
     async function addItem(name) {
-        await axios.post('/add_item', {"column_id": props.columnId, "name": name});
+        await axios.post('https://lit-bastion-94694.herokuapp.com/add_item', {"column_id": props.columnId, "name": name});
         setCurrentItem({value: name, label: name});
         getItems(props.columnId);
     }
 
     async function deleteItem(e, currentItem) {
         e.preventDefault()
-        console.log(props.columnId, currentItem.value)
-        await axios.delete('/delete_item', {data: {"column_id": props.columnId, "name": currentItem.value} } );
+        await axios.delete('https://lit-bastion-94694.herokuapp.com/delete_item', {data: {"column_id": props.columnId, "name": currentItem.value} } );
         setCurrentItem("")
         getItems(props.columnId)
     }   
