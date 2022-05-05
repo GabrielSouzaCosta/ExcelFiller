@@ -21,7 +21,7 @@ export default function Login() {
       return
     }
     else if (password === "") {
-      setMsg("Please create a password.")
+      setMsg("Please provide a password.")
       return
     }
     await axios.post('https://lit-bastion-94694.herokuapp.com/login', {"email": email, "password": password})

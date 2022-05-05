@@ -60,11 +60,19 @@ function Content() {
 
 
   async function generateFile(e) {
+    e.preventDefault();
     let headers = columns.cols.map((col) => {return col.name})
     let content = {'cells': rows, 'headers': headers}
-    e.preventDefault()
-    await axios.post('https://lit-bastion-94694.herokuapp.com/generate_file', {data: content}).catch(err => console.log(err))
+    await axios( {url:'https://lit-bastion-94694.herokuapp.com/generate_file', method: 'POST', responseType: 'blob' , data: content} ).then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'sheet.xlsx'); //or any other extension
+        document.body.appendChild(link);
+        link.click();
+    });
   }
+
 
   function handleColumnChange(e, id) {
     e.preventDefault()
@@ -112,7 +120,7 @@ function Content() {
                                             <input tabIndex={-1} className="btn px-0 mb-2 ms-1" type="image" alt='delete-column' value={col.id} id="button-delete" src='delete_column.png' onClick={(e) => {e.preventDefault(); dispatch(deleteColumn(e.target.value, currentId))}}></input> 
                                             </div>
                                         </div>
-                                        <Select tabIndex={-1} className=" mb-2" options={options} defaultValue={col.type} onChange={(e) => { dispatch(selectInput(e, col.id)) }} />
+                                        <Select tabIndex={-1} className=" mb-2" options={options} defaultValue={options[0]} onChange={(e) => { dispatch(selectInput(e, col.id)) }} />
                                         <InputSelector type={col.type} columnId={col.id} index={i} />
                                     </form>          
                                 )
@@ -122,7 +130,11 @@ function Content() {
                                 dispatch(addRow(cells));
                             }}>Insert row</button>
                             </>
-                             : <p className='display-5 mt-5 m-auto'>"Create a table or select one..." &#128522;</p>}
+                             :  <div className='container-fluid text-center'>
+                                    <p className='display-5 mt-5 m-auto'>"Create a table or select one..." &#128522;</p>
+                                    <p style={{fontVariant: "small-caps"}} className="fs-4 pt-2"><span className='fw-bolder'>TIP</span>: Use <span className='fw-bolder'>TAB</span> to go to next value and <span className='fw-bolder'>ALT + TAB</span> to previous value</p>
+                                </div>
+                                }
                             
                             
                             {(columns.cols) ? <>

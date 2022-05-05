@@ -1,12 +1,13 @@
-from crypt import methods
+
 from datetime import datetime, timezone, timedelta
-from os import access
-from flask import Flask, jsonify, redirect, request
+from flask import Flask, Response, jsonify, redirect, request, send_file
 from app import app
 from openpyxl import Workbook
-import webbrowser
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required, current_user, get_jwt, set_access_cookies
 from models import *
+from flask_cors import CORS, cross_origin
+
+CORS(app)
 
 jwt = JWTManager(app)
 
@@ -168,12 +169,13 @@ def get_items(id):
     return jsonify(results), 200
 
 
-@app.route('/generate_file', methods = ['POST'])
+@app.route('/generate_file', methods = ['POST', 'GET'])
+@cross_origin()
 def generate_file():
     wb = Workbook()
     ws = wb.active
     headers_excel = []
-    content = request.json.get("data")
+    content = request.json
     table_headers = content['headers']
     for header in table_headers:
         headers_excel.append(header)
@@ -181,7 +183,6 @@ def generate_file():
     ws.append(headers_excel)
     for row in table_cells:
         ws.append(row)
-    wb.save('planilha.xlsx')
-    print("Arquivo salvo!")
-    webbrowser.open("planilha.xlsx")
-    return "FIle created"
+
+    wb.save('sheet.xlsx')
+    return send_file("sheet.xlsx", as_attachment=True, attachment_filename="sheet.xlsx", mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"), 200
