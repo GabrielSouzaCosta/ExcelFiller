@@ -27,19 +27,19 @@ function Content() {
       })
       return currTable
     })
-  const tablesOptions = useSelector(state => state.tableReducer.tables)
-  const columns = useSelector(state => state.tableReducer.columns)
-  const rows = useSelector(state => state.tableReducer.rows)
-  
-  const dispatch = useDispatch()
-  
-  const [newCol, setNewCol] = useState("")
-  const [localColumns, setLocalColumns] = useState({})
-  let session_id = sessionStorage.getItem("table_id")
-  let [token, setToken] = useState(sessionStorage.getItem("token"))
+    const tablesOptions = useSelector(state => state.tableReducer.tables)
+    const columns = useSelector(state => state.tableReducer.columns)
+    const rows = useSelector(state => state.tableReducer.rows)
+    
+    const dispatch = useDispatch()
+    
+    const [newCol, setNewCol] = useState("")
+    const [localColumns, setLocalColumns] = useState({})
+    let session_id = sessionStorage.getItem("table_id")
+    let [token, setToken] = useState(sessionStorage.getItem("token"))
+    
 
   
-
   useEffect(() => {
       setToken(sessionStorage.getItem("token"))
       if (session_id){
@@ -103,7 +103,7 @@ function Content() {
                     <form className="text-center">
                         <div className="d-flex ">
                             <CreatableSelect placeholder="Choose or Create" options={tablesOptions} value={currentTable} id={currentId} onCreateOption={(e) => dispatch(createTable(e, token))} onChange={(e) => setCurrentId(e.id)} />
-                            <button className="btn btn-danger ms-3" onClick={(e) => {dispatch(deleteTable(currentId)); dispatch(fetchTables(token)); }}>Delete Table</button>
+                            <button className="btn btn-danger ms-3" onClick={ (e) => {dispatch(deleteTable(currentId));  dispatch(fetchTables(token));} }>Delete Table</button>
                         </div>
                         <button type="submit" value="generateFile" onClick={(e) => generateFile(e)} className="btn btn-success mt-3 mb-4">Generate File</button>
                     </form>
@@ -113,11 +113,11 @@ function Content() {
                             {(columns.cols) ? <>
                                 {columns.cols.map((col, i) => {
                                 return(
-                                    <form key={i+`-${col.name}`} className="p-0 m-0 me-3">
+                                    <form key={i+`-${col.name}`} className="p-0 m-0 me-3" onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}>
                                         <div className="input-group">
                                             <input tabIndex={-1} className="form-control form-control-sm text-center mb-2" id={col.id} defaultValue={col.name} onMouseLeave={(e) => { if (e.target.value !== col.name) {setTimeout(()=>{ dispatch(changeColumnName(e.target.value, e.target.id, currentId)) }, 1000)}; handleColumnChange(e, e.target.id)}} aria-describedby="button-delete"  ></input>
                                             <div className="input-group-append" >
-                                            <input tabIndex={-1} className="btn px-0 mb-2 ms-1" type="image" alt='delete-column' value={col.id} id="button-delete" src='delete_column.png' onClick={(e) => {e.preventDefault(); dispatch(deleteColumn(e.target.value, currentId))}}></input> 
+                                            <input  tabIndex={-1} className="px-0 ms-1 pt-1" type="image" alt='delete-column' value={col.id} id="button-delete" src='delete_column.png' onClick={(e) => {e.preventDefault(); dispatch(deleteColumn(e.target.value, currentId))}}></input> 
                                             </div>
                                         </div>
                                         <Select tabIndex={-1} className=" mb-2" options={options} defaultValue={options[0]} onChange={(e) => { dispatch(selectInput(e, col.id)) }} />
@@ -139,14 +139,12 @@ function Content() {
                             
                             {(columns.cols) ? <>
                                 {columns.cols.length < 7 ?
-                                        <>
-                                            <form className="p-0 m-0">
-                                                <input type="text" tabIndex={-1} className="form-control form-control-md text-center mb-2" placeholder="Name of the column" value={newCol} onChange={(e) => setNewCol(e.target.value)}  ></input>
-                                                <Select tabIndex={-1} className="mb-2" options={options} defaultValue={options[0]} />
+                                                <form className="p-0 m-0">
+                                                    <div className="d-flex flex-row">
+                                                        <input type="text" tabIndex={-1} className="form-control form-control-md text-center" placeholder="Name of the column" value={newCol} onChange={(e) => setNewCol(e.target.value)}  ></input>
+                                                        <input className="ms-2" style={{width: '30px'}} type="image" src="plus-square.svg" alt="add column" onClick={(e) => {e.preventDefault(); setNewCol(""); dispatch(addColumn(newCol, currentId));}}></input>
+                                                    </div>
                                                 </form>
-                                            <input className="ms-2" style={{width: '30px'}} type="image" src="plus-square.svg" alt="add column" onClick={(e) => {setNewCol(""); dispatch(addColumn(newCol, currentId));}}></input>
-                                        
-                                        </>
                                     : ""    
                                 }
                             </>  : ""}
