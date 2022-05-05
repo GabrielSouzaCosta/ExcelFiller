@@ -1,20 +1,5 @@
 import axios from "axios"
 
-export const createTable = (table, token) => async (dispatch) => {
-    const response = await axios.post('https://lit-bastion-94694.herokuapp.com/create_table', {"name": table}, {headers: {"Authorization": "Bearer "+ token} })
-    dispatch({type: "CREATE_TABLE", payload: {name: response.data.name, id: response.data.id}})
-}
-
-export const deleteTable = (id) => async (dispatch) => {
-    await axios.delete('https://lit-bastion-94694.herokuapp.com/delete_table', {data: {"id": id}})
-    dispatch({type: "DELETE_TABLE", payload: id})
-}
-
-export const fetchTables = (token) => async (dispatch) => {
-        const response = await axios.get('https://lit-bastion-94694.herokuapp.com/tables', {headers: {"Authorization": "Bearer "+ token} } );
-        dispatch({type: "FETCH_TABLES", payload: response.data})
-    };
-
 export const fetchColumns = (id) => async (dispatch) => {
     const response = await axios.get(`https://lit-bastion-94694.herokuapp.com/tables/${id}`)
     dispatch({type: "FETCH_COLUMNS", payload: response.data})

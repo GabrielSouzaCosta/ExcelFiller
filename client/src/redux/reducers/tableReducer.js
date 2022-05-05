@@ -1,30 +1,11 @@
 const initialState = {  
-    tables: [],
     columns: {},
     rows: []
 }
 
 const tableReducer = (state = initialState, action) => {
     switch (action.type) {
-        case "FETCH_TABLES":
-            {
-                let data = action.payload.map(({name, id}) => {
-                    return {value: name, label: name, id: id};
-                })
-                return {...state, tables: data}
-            }
-            
-        case "CREATE_TABLE":
-            {
-                return {...state, tables: [...state.tables, {value: action.payload.name, label: action.payload.name, id: action.payload.id}]};
-            }
-            
-        case "DELETE_TABLE":
-            {
-                let ftables = [state.tables.filter((table) => {return table.id !== action.payload})]
-                return {...state, tables: ftables, currentId: 1};
-            }
-        
+                        
         case "FETCH_COLUMNS":
             {
                 let data = action.payload.columns.map((col) => { return{name: col.name, type: "text", id: col.id}});

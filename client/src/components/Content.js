@@ -17,17 +17,10 @@ const options = [
   ]
 
 function Content() {
-  const [currentId, setCurrentId] = useState(sessionStorage.getItem("table_id"));
-  const currentTable = useSelector(state => {
-      let currTable = state.tableReducer.tables.filter((table) => {
-          if (table.id === currentId) {
-              return table
-          } 
-          return null
-      })
-      return currTable
-    })
-    const tablesOptions = useSelector(state => state.tableReducer.tables)
+    const [tables, setTables] = useState([])
+    const [currentTable, setCurrentTable] = useState({})
+    const [tablesOptions, setTableOptions] = useState([])
+
     const columns = useSelector(state => state.tableReducer.columns)
     const rows = useSelector(state => state.tableReducer.rows)
     
@@ -35,28 +28,34 @@ function Content() {
     
     const [newCol, setNewCol] = useState("")
     const [localColumns, setLocalColumns] = useState({})
-    let session_id = sessionStorage.getItem("table_id")
     let [token, setToken] = useState(sessionStorage.getItem("token"))
     
 
-  
-  useEffect(() => {
-      setToken(sessionStorage.getItem("token"))
-      if (session_id){
-          dispatch(fetchColumns(session_id))
-      }
-  }, [])
+    async function fetchTables (token) {
+        const response = await axios.get('https://lit-bastion-94694.herokuapp.com/tables', {headers: {"Authorization": "Bearer "+ token} } );
+        setTables([...response.data])
+        let data = response.data.map(({name, id}) => {
+            return {value: name, label: name, id: id};
+        })
+        setTableOptions(data)
+  };
 
-  useEffect(() => {
-      dispatch(fetchTables(token))
-      if (currentId !== undefined && currentId !== null) {
-        dispatch(fetchColumns(currentId))
+  async function createTable (table, token) {
+    const response = await axios.post('https://lit-bastion-94694.herokuapp.com/create_table', {"name": table}, {headers: {"Authorization": "Bearer "+ token} })
+    let newTable = {value: response.data.name, label: response.data.name, id: response.data.id}
+    setTableOptions( [...tablesOptions, newTable] );
+    setCurrentTable(newTable)
+}
+
+    async function deleteTable (e, id) {
+        e.preventDefault()
+        await axios.delete('https://lit-bastion-94694.herokuapp.com/delete_table', {data: {"id": id}})
+        let ftables = [tablesOptions.filter((table) => {return table.id !== id})]
+        console.log(ftables)
+        setTableOptions(ftables)
+        fetchTables(token)
+        setCurrentTable({})
     }
-}, [currentId])
-
-  useEffect(() => {
-      setLocalColumns(columns)
-  }, [columns])    
 
 
   async function generateFile(e) {
@@ -94,6 +93,27 @@ function Content() {
     return cells
   }
 
+  useEffect(() => {
+      setToken(sessionStorage.getItem("token"))
+      fetchTables(token)
+      if (Object.keys(currentTable).length !== 0) {
+          console.log("currentTable")
+          dispatch(fetchColumns(currentTable.id))
+      } 
+  }, [])
+
+  useEffect(() => {
+    if (Object.keys(currentTable).length !== 0) {
+        dispatch(fetchColumns(currentTable.id))
+    }
+}, [currentTable])
+
+  useEffect(() => {
+      setLocalColumns(columns)
+  }, [columns])    
+
+
+
   return (
     <div style={{backgroundColor: "#cbd4c2"}} className="vh-100">
             <div className="container-fluid">
@@ -102,8 +122,8 @@ function Content() {
                 <div className="nav justify-content-center">
                     <form className="text-center">
                         <div className="d-flex ">
-                            <CreatableSelect placeholder="Choose or Create" options={tablesOptions} value={currentTable} id={currentId} onCreateOption={(e) => dispatch(createTable(e, token))} onChange={(e) => setCurrentId(e.id)} />
-                            <button className="btn btn-danger ms-3" onClick={ (e) => {dispatch(deleteTable(currentId));  dispatch(fetchTables(token));} }>Delete Table</button>
+                            <CreatableSelect placeholder="Choose or Create" options={tablesOptions} value={currentTable}  onCreateOption={(e) => createTable(e, token)} onChange={(e) => setCurrentTable(e) } />
+                            <button className="btn btn-danger ms-3" onClick={ (e) => { deleteTable(e, currentTable.id); fetchTables(token);} }>Delete Table</button>
                         </div>
                         <button type="submit" value="generateFile" onClick={(e) => generateFile(e)} className="btn btn-success mt-3 mb-4">Generate File</button>
                     </form>
@@ -115,9 +135,9 @@ function Content() {
                                 return(
                                     <form key={i+`-${col.name}`} className="p-0 m-0 me-3" onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}>
                                         <div className="input-group">
-                                            <input tabIndex={-1} className="form-control form-control-sm text-center mb-2" id={col.id} defaultValue={col.name} onMouseLeave={(e) => { if (e.target.value !== col.name) {setTimeout(()=>{ dispatch(changeColumnName(e.target.value, e.target.id, currentId)) }, 1000)}; handleColumnChange(e, e.target.id)}} aria-describedby="button-delete"  ></input>
+                                            <input tabIndex={-1} className="form-control form-control-sm text-center mb-2" id={col.id} defaultValue={col.name} onMouseLeave={(e) => { if (e.target.value !== col.name) {setTimeout(()=>{ dispatch(changeColumnName(e.target.value, e.target.id, currentTable.id)) }, 1000)}; handleColumnChange(e, e.target.id)}} aria-describedby="button-delete"  ></input>
                                             <div className="input-group-append" >
-                                            <input  tabIndex={-1} className="px-0 ms-1 pt-1" type="image" alt='delete-column' value={col.id} id="button-delete" src='delete_column.png' onClick={(e) => {e.preventDefault(); dispatch(deleteColumn(e.target.value, currentId))}}></input> 
+                                            <input  tabIndex={-1} className="px-0 ms-1 pt-1" type="image" alt='delete-column' value={col.id} id="button-delete" src='delete_column.png' onClick={(e) => {e.preventDefault(); dispatch(deleteColumn(e.target.value, currentTable.id))}}></input> 
                                             </div>
                                         </div>
                                         <Select tabIndex={-1} className=" mb-2" options={options} defaultValue={options[0]} onChange={(e) => { dispatch(selectInput(e, col.id)) }} />
@@ -142,7 +162,7 @@ function Content() {
                                                 <form className="p-0 m-0">
                                                     <div className="d-flex flex-row">
                                                         <input type="text" tabIndex={-1} className="form-control form-control-md text-center" placeholder="Name of the column" value={newCol} onChange={(e) => setNewCol(e.target.value)}  ></input>
-                                                        <input className="ms-2" style={{width: '30px'}} type="image" src="plus-square.svg" alt="add column" onClick={(e) => {e.preventDefault(); setNewCol(""); dispatch(addColumn(newCol, currentId));}}></input>
+                                                        <input className="ms-2" style={{width: '30px'}} type="image" src="plus-square.svg" alt="add column" onClick={(e) => {e.preventDefault(); setNewCol(""); dispatch(addColumn(newCol, currentTable.id));}}></input>
                                                     </div>
                                                 </form>
                                     : ""    
