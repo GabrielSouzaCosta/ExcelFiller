@@ -30,6 +30,7 @@ function Navbar() {
                                 </>
                             }
                         </ul>
+                      
                     </div>
                 </nav>
     </>

@@ -24,6 +24,10 @@ export const removeRow = (i) => {
     }
 }
 
+export const resetRows = () => {
+    return {type: "RESET_ROWS"}
+}
+
 export const changeColumnName = (newName, id, currentId) => async (dispatch) => {
     let table_id = currentId
     await axios.put(`https://lit-bastion-94694.herokuapp.com/tables/${table_id}/update_column`, {data: {"new_name": newName, "id":id}})

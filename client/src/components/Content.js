@@ -130,7 +130,7 @@ function Content() {
                 </div>
 
                 <div className="container-fluid d-flex flex-row col-12 p-0 justify-content-start align-items-center">
-                            {(columns.cols) ? <>
+                            {(columns.cols && Object.keys(currentTable).length !== 0) ? <>
                                 {columns.cols.map((col, i) => {
                                 return(
                                     <form key={i+`-${col.name}`} className="p-0 m-0 me-3" onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}>
@@ -157,7 +157,7 @@ function Content() {
                                 }
                             
                             
-                            {(columns.cols) ? <>
+                            {(columns.cols && Object.keys(currentTable).length !== 0) ? <>
                                 {columns.cols.length < 7 ?
                                                 <form className="p-0 m-0">
                                                     <div className="d-flex flex-row">
@@ -173,8 +173,8 @@ function Content() {
 
                         <div className="col-12 p-0 justify-content-start align-items-center mt-3 ps-2" id="rowsDiv">
                             <div style={{paddingRight:"57px"}} className="row w-100">
-                            {(localColumns.cols) ? <>
-                                {localColumns.cols.map(col => {
+                            {(columns.cols && Object.keys(currentTable).length !== 0) ? <>
+                                {columns.cols.map(col => {
                                 return(         
                                     <div key={col.id + "_header"} className="col card text-center">
                                         {col.name}
@@ -186,6 +186,7 @@ function Content() {
                             
                                 
                             </div>
+                            {(columns.cols && Object.keys(currentTable).length !== 0) ? <>
                                     {rows.map((row, i) => {
                                         return(
                                             <div key={`row ${i}`} id={`row-${i}`} className="row w-100">
@@ -198,7 +199,8 @@ function Content() {
                                                     }}></input>
                                             </div>
                                         )
-                                    })} 
+                                    })}
+                                </> : ""}
                         </div>
                 
         

@@ -58,6 +58,11 @@ const tableReducer = (state = initialState, action) => {
                 clone[index] = item
                 return {...state, columns: {...state.columns, cols: clone}}
             }
+
+        case "RESET_ROWS":
+            {
+                return {...state, rows: []}
+            }
         
         default:    
             return state;
