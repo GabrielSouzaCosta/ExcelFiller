@@ -36,7 +36,7 @@ function DemonstrationContent() {
               <div className="d-flex justify align-items-center">
                   <p className="h3 m-0 me-2 text-success fs-5">Contact: </p> 
                   <a className="btn btn-success text-decoration-none text-white me-2" rel="noreferrer" href="mailto:gabriSco72@gmail.com" target="_blank">Email</a>
-                  <a className='d-inline btn btn-primary link-light text-decoration-none' href="https://www.linkedin.com/in/gabriel-souza-costa-8443481bb/">Linkedin</a>
+                  <a className='d-inline btn btn-primary link-light text-decoration-none' target="_blank" rel="noreferrer" href="https://www.linkedin.com/in/gabriel-souza-costa-8443481bb/">Linkedin</a>
               </div>
 
           </div>
