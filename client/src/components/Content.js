@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
+import Navbar from './Navbar';
 import CreatableSelect from 'react-select/creatable';
 import { useDispatch, useSelector } from 'react-redux';
 import { createTable, fetchTables, fetchColumns, addColumn, deleteTable, addRow, changeColumnName, deleteColumn, removeRow, selectInput } from '../redux/actions/tables';
@@ -135,7 +136,10 @@ function Content() {
 
 
   return (
-    <div style={{backgroundColor: "#cbd4c2"}} className="vh-100">
+    <>
+    <Navbar /> 
+    <p className='d-sm-flex d-md-none m-5 text-center lead'>Open this site on a desktop, as it's only usable on it &#128556;</p>
+    <div style={{backgroundColor: "#cbd4c2"}} className="d-none d-md-flex vh-100">
             <div className="container-fluid">
                 <h1 className="display-4 pb-2 pt-5 text-center">Tables</h1>
 
@@ -160,7 +164,7 @@ function Content() {
                                                 dispatch(changeColumnName(e.target.value, e.target.id, currentTable.id)) }; 
                                                 handleColumnChange(e, e.target.id);
                                                 }} 
-                                            aria-describedby="button-delete"  ></input>
+                                                aria-describedby="button-delete"  ></input>
 
                                             <div className="input-group-append" >
                                             <input  tabIndex={-1} className="px-0 ms-1 pt-1" type="image" alt='delete-column' value={col.id} id="button-delete" src='delete_column.png' onClick={(e) => {e.preventDefault(); dispatch(deleteColumn(e.target.value, currentTable.id))}}></input> 
@@ -233,6 +237,7 @@ function Content() {
 
             </div>
             </div>
+    </>
   )
 }
 

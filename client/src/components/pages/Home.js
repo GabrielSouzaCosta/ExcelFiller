@@ -1,5 +1,6 @@
 import React from "react";
 import Navbar from "../Navbar";
+import DemonstrationNavbar from "../AuthNavbar";
 import DemonstrationContent from "../DemonstrationContent";
 import Content from "../Content";
 import { useSelector } from 'react-redux';
@@ -9,8 +10,8 @@ function Home() {
 
   return (
     <>
-      <Navbar />
-      {(token && token !== "" && token !== undefined) ? <Content /> : <DemonstrationContent />}
+      
+      {(token && token !== "" && token !== undefined) ? <> <Content /> </> : <> <DemonstrationContent />  </>}
     </>
 
 

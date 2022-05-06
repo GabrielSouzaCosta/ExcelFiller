@@ -3,20 +3,18 @@ import { logoutAction } from '../redux/actions/auth';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom'
 
+function DemonstrationNavbar() {
+    const token = useSelector((state) => state.authReducer.token);
+    const dispatch = useDispatch()
 
-function Navbar() {
-  const token = useSelector((state) => state.authReducer.token);
-  const dispatch = useDispatch()
-
-  function logout(e) {
+    function logout(e) {
     e.preventDefault()
     sessionStorage.removeItem("token")
     dispatch(logoutAction())
-}
+    }         
 
-  return (
-    <>
-                <nav style={{backgroundColor: "#172F2A"}} className="navbar navbar-expand-lg navbar-dark sticky-top w-100 justify-content-center">
+    return (
+        <nav style={{backgroundColor: "#172F2A"}} className="navbar navbar-expand-lg navbar-dark sticky-top w-100 justify-content-center position-absolute">
                     <div className="container-fluid">
                         <a tabIndex={-1} className="navbar-brand display-2 fs-2" href="/">ExcelFiller</a>
                         <ul className="nav navbar justify-content-center" >
@@ -32,10 +30,8 @@ function Navbar() {
                         </ul>
                       
                     </div>
-                </nav>
-    </>
+        </nav>
   )
 }
 
-
-export default Navbar
+export default DemonstrationNavbar
