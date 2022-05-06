@@ -8,7 +8,7 @@ const tableReducer = (state = initialState, action) => {
                         
         case "FETCH_COLUMNS":
             {
-                let data = action.payload.columns.map((col) => { return{name: col.name, type: "text", id: col.id}});
+                let data = action.payload.columns.map((col) => { return{name: col.name, type: "", id: col.id}});
                 return {...state, columns: {tableId: action.payload.id, cols: data } }
             }
 

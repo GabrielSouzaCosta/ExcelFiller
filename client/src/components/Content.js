@@ -140,8 +140,8 @@ function Content() {
                                             <input  tabIndex={-1} className="px-0 ms-1 pt-1" type="image" alt='delete-column' value={col.id} id="button-delete" src='delete_column.png' onClick={(e) => {e.preventDefault(); dispatch(deleteColumn(e.target.value, currentTable.id))}}></input> 
                                             </div>
                                         </div>
-                                        <Select tabIndex={-1} className=" mb-2" options={options} defaultValue={options[0]} onChange={(e) => { dispatch(selectInput(e, col.id)) }} />
-                                        <InputSelector type={col.type} columnId={col.id} index={i} />
+                                        <Select tabIndex={-1} className=" mb-2" options={options} placeholder="Choose a data type" onChange={(e) => { dispatch(selectInput(e, col.id)) }} />
+                                        {(col.type) ? <InputSelector type={col.type} columnId={col.id} index={i} /> : ""}
                                     </form>          
                                 )
                             })}
