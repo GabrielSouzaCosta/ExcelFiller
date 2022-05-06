@@ -73,22 +73,43 @@ function Content() {
   }
 
 
-  function handleColumnChange(e, id) {
+  async function handleColumnChange(e, id) {
     e.preventDefault()
     let index = localColumns.cols.findIndex(item => item.id === id)
     let clone = [...localColumns.cols]
-    let item = clone[index]
-    item.name = e.target.value  
+    console.log(clone)
+    let item = await clone[index]
+    item.name = e.target.value 
     clone[index] = item
     setLocalColumns({...localColumns, cols: clone})
   }
+
+  function getCell (i)  {
+    let c = document.getElementById(`value-${i}`);
+    console.log(c)
+    if (c ==! null) {
+        return c;
+    } 
+    return "";
+    }
 
   function createCells(e) {
     e.preventDefault()
     const cells = []
     columns.cols.forEach((column, i) => {
-        let cell = document.getElementById(`value-${i}`).value
-        cells.push(cell)
+        let cell = document.getElementById(`value-${i}`)
+        if (cell) {
+            if (cell.type === "date") {
+                let d = new Date(cell.value);
+                d.setDate(d.getDate()+1);
+                let date = d.toLocaleDateString('pt-BR');
+                cells.push(date)
+            } else {
+                cells.push(cell.value)
+            }
+        } else {
+            cells.push("")
+        }
     })
     return cells
   }
@@ -97,7 +118,6 @@ function Content() {
       setToken(sessionStorage.getItem("token"))
       fetchTables(token)
       if (Object.keys(currentTable).length !== 0) {
-          console.log("currentTable")
           dispatch(fetchColumns(currentTable.id))
       } 
   }, [])
@@ -135,7 +155,13 @@ function Content() {
                                 return(
                                     <form key={i+`-${col.name}`} className="p-0 m-0 me-3" onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}>
                                         <div className="input-group">
-                                            <input tabIndex={-1} className="form-control form-control-sm text-center mb-2" id={col.id} defaultValue={col.name} onMouseLeave={(e) => { if (e.target.value !== col.name) {setTimeout(()=>{ dispatch(changeColumnName(e.target.value, e.target.id, currentTable.id)) }, 1000)}; handleColumnChange(e, e.target.id)}} aria-describedby="button-delete"  ></input>
+
+                                            <input tabIndex={-1} className="form-control form-control-sm text-center mb-2" id={col.id} defaultValue={col.name} onMouseLeave={(e) => { if (e.target.value !== col.name) { 
+                                                dispatch(changeColumnName(e.target.value, e.target.id, currentTable.id)) }; 
+                                                handleColumnChange(e, e.target.id);
+                                                }} 
+                                            aria-describedby="button-delete"  ></input>
+
                                             <div className="input-group-append" >
                                             <input  tabIndex={-1} className="px-0 ms-1 pt-1" type="image" alt='delete-column' value={col.id} id="button-delete" src='delete_column.png' onClick={(e) => {e.preventDefault(); dispatch(deleteColumn(e.target.value, currentTable.id))}}></input> 
                                             </div>
@@ -186,7 +212,7 @@ function Content() {
                             
                                 
                             </div>
-                            {(columns.cols && Object.keys(currentTable).length !== 0) ? <>
+                            {(localColumns.cols && Object.keys(currentTable).length !== 0) ? <>
                                     {rows.map((row, i) => {
                                         return(
                                             <div key={`row ${i}`} id={`row-${i}`} className="row w-100">
