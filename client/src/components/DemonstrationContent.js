@@ -2,11 +2,12 @@ import React from 'react'
 
 function DemonstrationContent() {
   return (
-    <div style={{backgroundColor: "#cbd4c2"}} className='container-fluid vh-100'>
+    <>
+      
+    <div style={{backgroundColor: "#cbd4c2"}} className='container-fluid vh-100 d-flex flex-column justify-content-center align-items-center'>
 
-        <header>
-            <h1 className='text-center display-4 py-5'>Login or register an account and start creating your spreadsheets faster</h1>
-        </header>
+          
+            <h1 className='text-center display-4 py-4'>Login or register an account and start creating your spreadsheets faster</h1>
 
 
         <section className='d-flex justify-content-center align-items-center'>
@@ -26,13 +27,23 @@ function DemonstrationContent() {
               <video loop muted src='sample.webm' id='video' onClick={ (e) => {document.getElementById("video").play()} } poster="poster.png" type="video/webm" ></video>
           </div>
 
+
+
         </section>
 
+        <div className="container-fluid py-0 position-absolute bottom-0 w-100 py-2">
+              <div className="d-flex">
+                  <p className="h3 m-0 text-success me-2">Contact: <a className="btn btn-success text-decoration-none text-white" rel="noreferrer" href="mailto:gabriSco72@gmail.com" target="_blank">gabriSco72@gmail.com</a></p>
+                  <a className='btn btn-primary link-light text-decoration-none ' href="https://www.linkedin.com/in/gabriel-souza-costa-8443481bb/">Linkedin</a>
+              </div>
 
-          
-
-
+          </div>
     </div>
+
+
+
+    
+    </>
   )
 }
 

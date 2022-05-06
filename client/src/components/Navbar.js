@@ -16,7 +16,7 @@ function Navbar() {
 
   return (
     <>
-                <nav style={{backgroundColor: "#172F2A"}} className="navbar navbar-expand-lg navbar-dark sticky-top w-100 justify-content-center">
+                <nav style={{backgroundColor: "#172F2A"}} className="navbar navbar-expand-lg navbar-dark sticky-top w-100 justify-content-center position-absolute">
                     <div className="container-fluid">
                         <a tabIndex={-1} className="navbar-brand display-2 fs-2" href="/">ExcelFiller</a>
                         <ul className="nav navbar justify-content-center" >
