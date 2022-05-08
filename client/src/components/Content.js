@@ -137,11 +137,13 @@ function Content() {
 
   return (
     <>
-    <Navbar /> 
-    <p className='d-sm-flex d-md-none m-5 text-center lead'>Open this site on a desktop, as it's only usable on it &#128556;</p>
-    <div style={{backgroundColor: "#cbd4c2"}} className="d-none d-md-flex vh-100">
+    <div className=''>
+        
+        <Navbar /> 
+        <p className='d-sm-flex d-md-none m-5 text-center lead'>Open this site on a desktop, as it's only usable on it &#128556;</p>
+            <div className="d-none d-md-flex vh-100">
             <div className="container-fluid">
-                <h1 className="display-4 pb-2 pt-5 text-center">Tables</h1>
+                <h1 className="display-4 pb-2 pt-2 text-center">Tables</h1>
 
                 <div className="nav justify-content-center">
                     <form className="text-center">
@@ -170,7 +172,7 @@ function Content() {
                                             <input  tabIndex={-1} className="px-0 ms-1 pt-1" type="image" alt='delete-column' value={col.id} id="button-delete" src='delete_column.png' onClick={(e) => {e.preventDefault(); dispatch(deleteColumn(e.target.value, currentTable.id))}}></input> 
                                             </div>
                                         </div>
-                                        <Select tabIndex={-1} className=" mb-2" options={options} placeholder="Choose a data type" onChange={(e) => { dispatch(selectInput(e, col.id)) }} />
+                                        <Select tabIndex={-1} className=" mb-2" options={options} placeholder="Data type" onChange={(e) => { dispatch(selectInput(e, col.id)) }} />
                                         {(col.type) ? <InputSelector type={col.type} columnId={col.id} index={i} /> : ""}
                                     </form>          
                                 )
@@ -205,7 +207,7 @@ function Content() {
                             <div style={{paddingRight:"57px"}} className="row w-100">
                             {(columns.cols && Object.keys(currentTable).length !== 0) ? <>
                                 {columns.cols.map(col => {
-                                return(         
+                                    return(         
                                     <div key={col.id + "_header"} className="col card text-center">
                                         {col.name}
                                     </div>
@@ -237,6 +239,7 @@ function Content() {
 
             </div>
             </div>
+    </div>
     </>
   )
 }

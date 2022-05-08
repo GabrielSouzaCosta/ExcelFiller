@@ -27,6 +27,7 @@ export default function Login() {
     }
     await axios.post('https://lit-bastion-94694.herokuapp.com/login', {"email": email, "password": password})
     .then(res => {if (res.status === 200) {
+      setMsg("Logging in...")
       sessionStorage.setItem("token", res.data.access_token)
       dispatch(loginSuccess(sessionStorage.getItem("token")))
       navigate('/')
@@ -57,11 +58,10 @@ export default function Login() {
 
   return (
     <>
-    <AuthNavbar />
-    <div style={{backgroundColor: "#E89291"}} className="container-fluid vh-100 w-100">
-        <div className='d-flex flex-row justify-content-center align-items-center h-100'>
-            <div className="card shadow-lg d-flex flex-column mw-100 justify-content-center align-items-center py-5 px-5">
-
+      <div style={{backgroundColor: "#E89291"}} className='d-flex flex-column vh-100'>
+        <AuthNavbar />
+        <div className='d-flex mw-100 align-items-center justify-content-center h-100'>
+          <div className="card shadow-lg d-flex flex-column mw-100 justify-content-center align-items-center py-5 px-4">
                 <h1 className="py-4 display-5">LOGIN</h1>
                 <form className='form' onSubmit={(e) => e.preventDefault()}>
                   <div className='d-flex flex-column justify-content-center text-center w-100'>
@@ -74,7 +74,7 @@ export default function Login() {
                 </form>
                 
                 <p className="mt-2">Does not have an account yet? <Link to="/register">Register now!</Link></p>
-                <div id="passwordHelpBlock" className="form-text mb-3 pb-3">
+                <div id="passwordHelpBlock" className="form-text pb-3">
                     {msg}
                 </div>
 

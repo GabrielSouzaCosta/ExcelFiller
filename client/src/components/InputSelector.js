@@ -57,7 +57,7 @@ function InputSelector(props) {
             {
                 return (<>
                 <div className="input-group">
-                    <CreatableSelect options={items} className={"form-control p-0 border-0 rounded"} value={currentItem} onChange={(e) => {setCurrentItem(e)}} onCreateOption={(e) => {addItem(e); }}  placeholder="Select or Create..."/>
+                    <CreatableSelect options={items} className={"form-control p-0 border-0 rounded"} value={currentItem} onChange={(e) => {setCurrentItem(e)}} onCreateOption={(e) => {addItem(e); }}  placeholder="Start typing.."/>
                     {(currentItem !== "") ? 
                     <div className="input-group-append" >
                         <input tabIndex={-1} className="btn px-0 ms-1" type="image" alt='delete-item' id="button-delete" src='delete_item.png' onClick={(e) => {deleteItem(e, currentItem)}}></input>
