@@ -3,7 +3,7 @@ import Select from 'react-select';
 import Navbar from './Navbar';
 import CreatableSelect from 'react-select/creatable';
 import { useDispatch, useSelector } from 'react-redux';
-import { createTable, fetchTables, fetchColumns, addColumn, deleteTable, addRow, changeColumnName, deleteColumn, removeRow, selectInput } from '../redux/actions/tables';
+import { fetchColumns, addColumn, addRow, changeColumnName, deleteColumn, removeRow, selectInput } from '../redux/actions/tables';
 import axios from 'axios';
 import InputSelector from './InputSelector';
 
@@ -85,14 +85,6 @@ function Content() {
     setLocalColumns({...localColumns, cols: clone})
   }
 
-  function getCell (i)  {
-    let c = document.getElementById(`value-${i}`);
-    console.log(c)
-    if (c ==! null) {
-        return c;
-    } 
-    return "";
-    }
 
   function createCells(e) {
     e.preventDefault()
@@ -105,8 +97,10 @@ function Content() {
                 d.setDate(d.getDate()+1);
                 let date = d.toLocaleDateString('pt-BR');
                 cells.push(date)
-            } else {
-                cells.push(cell.value)
+            } else if (cell.type === "text") {
+                let prefix = document.getElementById(`prefix-${i}`).value
+                let sufix = document.getElementById(`sufix-${i}`).value
+                cells.push(prefix + cell.value + sufix)
             }
         } else {
             cells.push("")
@@ -155,11 +149,11 @@ function Content() {
                     </form>
                 </div>
 
-                <div className="container-fluid d-flex flex-row col-12 p-0 justify-content-start align-items-center">
+                <div className="container-fluid d-flex flex-row p-0 justify-content-start align-items-center">
                             {(columns.cols && Object.keys(currentTable).length !== 0) ? <>
                                 {columns.cols.map((col, i) => {
                                 return(
-                                    <form key={i+`-${col.name}`} className="p-0 m-0 me-3" onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}>
+                                    <form key={i+`-${col.name}`} style={{width: "12%"}} className="p-0 m-0 me-3" onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}>
                                         <div className="input-group">
 
                                             <input tabIndex={-1} className="form-control form-control-sm text-center mb-2" id={col.id} defaultValue={col.name} onMouseLeave={(e) => { if (e.target.value !== col.name) { 
@@ -172,7 +166,7 @@ function Content() {
                                             <input  tabIndex={-1} className="px-0 ms-1 pt-1" type="image" alt='delete-column' value={col.id} id="button-delete" src='delete_column.png' onClick={(e) => {e.preventDefault(); dispatch(deleteColumn(e.target.value, currentTable.id))}}></input> 
                                             </div>
                                         </div>
-                                        <Select tabIndex={-1} className=" mb-2" options={options} placeholder="Data type" onChange={(e) => { dispatch(selectInput(e, col.id)) }} />
+                                        <Select tabIndex={-1} className="mb-2" options={options} placeholder="Data type" onChange={(e) => { dispatch(selectInput(e, col.id)) }} />
                                         {(col.type) ? <InputSelector type={col.type} columnId={col.id} index={i} /> : ""}
                                     </form>          
                                 )

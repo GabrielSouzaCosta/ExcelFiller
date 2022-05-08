@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import CreatableSelect from 'react-select/creatable';
 import CurrencyInput from 'react-currency-input-field';
-import Modal from 'react-modal';
+
+
 
 
 function InputSelector(props) {
@@ -10,11 +11,11 @@ function InputSelector(props) {
     let [currentItem, setCurrentItem] = useState("");
     let [items, setItems] = useState([]);
     let [currencyValue, setCurrencyValue] = useState("");
-    let [modalIsOpen, setModalIsOpen] = useState(false);
     let [prefix, setPrefix] = useState("");
     let [sufix, setSufix] = useState("");
     let [dateFormat, setDateFormat] = useState("pt-BR")
-
+    let [currency, setCurrency] = useState("$");
+    let [decimalSeparator, setDecimalSeparator] = useState(".");
 
     function getDate() {
         let current = new Date();
@@ -57,27 +58,37 @@ function InputSelector(props) {
         case "text":
             {
                 return (<>
-                    <div className='input-group'>
-                        <input id={`value-${props.index}`} className="form-control text-center" type={props.type} value={currentText} onChange={(e) => {setCurrentText(e.target.value)} }></input> 
-                        <div className='input-group-append'><input type="image" onClick={(e) => e.preventDefault()} className="img-fluid p-1 mt-2" src='gear.svg' data-bs-toggle="modal" data-bs-target="#exampleModal"></input></div>
-
-                        <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div className="modal-dialog">
-                            <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title" id="exampleModalLabel">Manual text Configuration</h5>
-                            </div>
-                            <div className="modal-body">
-                                <p>Prefix: <input className='form-control-sm' value={prefix} onChange={(e) => setPrefix(e.target.value)} ></input></p>
-                                <p>Sufix: <input className='form-control-sm' value={sufix} onChange={(e) => setSufix(e.target.value)}></input></p>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-primary" data-bs-dismiss="modal">Save changes</button>
-                            </div>
-                            </div>
+                        
+                    <div className='d-flex flex-row'>
+                        <div style={{width: "30%"}} className='input-group-append'>
+                            <input id={`prefix-${props.index}`} value={prefix} disabled className="form-control"></input>
                         </div>
+                        <input  id={`value-${props.index}`} className="form-control w-50" type="text" value={currentText} onChange={(e) => {setCurrentText(e.target.value)} }></input> 
+                        <div style={{width: "30%"}} className='input-group-append'>
+                            <input id={`sufix-${props.index}`} value={sufix} disabled className="form-control input-group-append"></input>
+                        </div>
+                        <div className='input-group-append w-25'>
+                            <input type="image" alt='text configuration' onClick={(e) => e.preventDefault()} className="img-fluid p-1 mt-2" src='gear.svg' data-bs-toggle="modal" data-bs-target="#exampleModal"></input>
                         </div>
                     </div>
+
+                            <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div className="modal-dialog">
+                                <div className="modal-content">
+                                <div className="modal-header">
+                                    <h5 className="modal-title" id="exampleModalLabel">Manual text Configuration</h5>
+                                </div>
+                                <div className="modal-body">
+                                    <p>Prefix: <input className='form-control-sm' value={prefix} onChange={(e) => setPrefix(e.target.value)} ></input></p>
+                                    <p>Sufix: <input className='form-control-sm' value={sufix} onChange={(e) => setSufix(e.target.value)}></input></p>
+                                </div>
+                                <div className="modal-footer">
+                                    <button type="button" className="btn btn-primary" data-bs-dismiss="modal">Save changes</button>
+                                </div>
+                                </div>
+                            </div>
+                    </div>
+
 
 
         </>)
@@ -122,7 +133,31 @@ function InputSelector(props) {
         case "currency":
             {
                 return (<>
-                    <CurrencyInput id={`value-${props.index}`} className={"form-control"} placeholder='$100,000,000' value={currencyValue} onValueChange={(e) =>setCurrencyValue(e)} prefix="R$" step={50} disableGroupSeparators decimalSeparator="," fixedDecimalLength={2}/>
+                <div className='input-group'>
+                    <CurrencyInput id={`value-${props.index}`} disableGroupSeparators={true} className={"form-control"} placeholder='$1000.00' value={currencyValue} onValueChange={(e) =>setCurrencyValue(e)} decimalSeparator={decimalSeparator} prefix={currency} step={50} fixedDecimalLength={2}/>
+                    <div className='input-group-append'>
+                        <input type="image" alt='currency configuration' onClick={(e) => e.preventDefault()} className="img-fluid p-1 mt-2" src='gear.svg' data-bs-toggle="modal" data-bs-target="#currencyModal"></input>
+                    </div>
+                    <div className="modal fade" id="currencyModal" tabIndex="-1" aria-labelledby="currencyModalLabel" aria-hidden="true">
+                        <div className="modal-dialog">
+                            <div className="modal-content">
+                                <form onSubmit={(e) => e.preventDefault()}>
+                                    <div className="modal-header">
+                                        <h5 className="modal-title" id="currencyModalLabel">Currency Configuration</h5>
+                                    </div>
+                                    <div className="modal-body">
+                                        <p>Currency: <input className='form-control-sm' defaultValue={currency} onChange={(e) => setCurrency(e.target.value)} ></input></p>
+                                        <p>Decimal Separator: <input className='form-control-sm' defaultValue={decimalSeparator} onChange={(e) => {setDecimalSeparator(e.target.value); }}></input></p>
+                                    </div>
+                                    <div className="modal-footer">
+                                        <button type="submit" className="btn btn-primary" data-bs-dismiss="modal">Save changes</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
                 </>)
             }
 
