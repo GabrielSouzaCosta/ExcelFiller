@@ -71,7 +71,7 @@ function InputSelector(props) {
                             <input id={`sufix-${props.index}`} readOnly value={sufix} disabled className="form-control input-group-append"></input>
                         </div>
                         <div className='input-group-append w-25'>
-                            <input type="image" alt='text configuration' onClick={(e) => e.preventDefault()} className="img-fluid p-1 mt-2" src='gear.svg' data-bs-toggle="modal" data-bs-target="#exampleModal"></input>
+                            <input type="image" tabIndex={-1} alt='text configuration' onClick={(e) => e.preventDefault()} className="img-fluid p-1 mt-2" src='gear.svg' data-bs-toggle="modal" data-bs-target="#exampleModal"></input>
                         </div>
                     </div>
 
