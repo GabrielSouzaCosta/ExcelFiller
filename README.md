@@ -12,5 +12,5 @@
     <li>Currency: Currency type - (Done)</li>
   </ul>
 
-<h2>Project Current State</h2>
+<h2>Project Image</h2>
 <img src="./client/public/sampleProject.png"></img>
