@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import CreatableSelect from 'react-select/creatable';
 import CurrencyInput from 'react-currency-input-field';
+import DatePicker from 'react-date-picker';
 
 
 
@@ -13,12 +14,15 @@ function InputSelector(props) {
     let [currencyValue, setCurrencyValue] = useState("");
     let [prefix, setPrefix] = useState("");
     let [sufix, setSufix] = useState("");
-    let [dateFormat, setDateFormat] = useState("pt-BR")
+    let [dateChanger, setDateChanger] = useState(0);
+    let [monthChanger, setMonthChanger] = useState(0);
     let [currency, setCurrency] = useState("$");
     let [decimalSeparator, setDecimalSeparator] = useState(".");
 
     function getDate() {
         let current = new Date();
+        current.setDate(current.getDate() + parseInt(dateChanger));
+        current.setMonth(current.getMonth() + parseInt(monthChanger));
         let date = current.toLocaleDateString('pt-BR').split('/');
         date = date.reverse().join('-');
         return date;
@@ -61,11 +65,11 @@ function InputSelector(props) {
                         
                     <div className='d-flex flex-row'>
                         <div style={{width: "30%"}} className='input-group-append'>
-                            <input id={`prefix-${props.index}`} value={prefix} disabled className="form-control"></input>
+                            <input id={`prefix-${props.index}`} readOnly value={prefix} disabled className="form-control"></input>
                         </div>
                         <input  id={`value-${props.index}`} className="form-control w-50" type="text" value={currentText} onChange={(e) => {setCurrentText(e.target.value)} }></input> 
                         <div style={{width: "30%"}} className='input-group-append'>
-                            <input id={`sufix-${props.index}`} value={sufix} disabled className="form-control input-group-append"></input>
+                            <input id={`sufix-${props.index}`} readOnly value={sufix} disabled className="form-control input-group-append"></input>
                         </div>
                         <div className='input-group-append w-25'>
                             <input type="image" alt='text configuration' onClick={(e) => e.preventDefault()} className="img-fluid p-1 mt-2" src='gear.svg' data-bs-toggle="modal" data-bs-target="#exampleModal"></input>
@@ -112,7 +116,35 @@ function InputSelector(props) {
         case "autodate":
             {
 
-                return (<input className="form-control" id={`value-${props.index}`} type="date" format={dateFormat} defaultValue={getDate()} ></input>)
+                return (<>
+                <div className='input-group'>
+                <input className="form-control" id={`value-${props.index}`} type="date" value={getDate()} ></input>
+                    <div className='input-group-append'>
+                        <input type="image" alt='currency configuration' onClick={(e) => e.preventDefault()} className="img-fluid p-1 mt-2" src='gear.svg' data-bs-toggle="modal" data-bs-target="#dateModal"></input>
+                    </div>
+
+                    <div className="modal fade" id="dateModal" tabIndex="-1" aria-labelledby="dateModalLabel" aria-hidden="true">
+                    <div className="modal-dialog">
+                            <div className="modal-content">
+                                    <div className="modal-header">
+                                        <h5 className="modal-title" id="dateModalLabel">Date Configuration</h5>
+                                    </div>
+                                    <div className="modal-body">
+                                        <p>Today +/-: <input type="number" className='form-control-sm' value={dateChanger} onChange={(e) => {setDateChanger(e.target.value); } }></input></p>
+                                        <p>Month +/-: <input type="number" className='form-control-sm' value={monthChanger} onChange={(e) => {setMonthChanger(e.target.value); } }></input></p>
+                                    </div>
+                                    <div className="modal-footer">
+                                        <button type="submit" className="btn btn-primary" data-bs-dismiss="modal">Save changes</button>
+                                    </div>
+                            </div>
+                    </div>
+                    </div>
+                </div>
+                
+                
+                </>
+                )
+
             }
                 
         case "autotime":

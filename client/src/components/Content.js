@@ -92,9 +92,10 @@ function Content() {
     columns.cols.forEach((column, i) => {
         let cell = document.getElementById(`value-${i}`)
         if (cell) {
-            if (cell.type === "date") {
-                let d = new Date(cell.value);
-                d.setDate(d.getDate()+1);
+            if (cell.type === "date") {;;
+                let d = new Date(cell.value)
+                let options = document.getElementById(`format-${i}`).value
+                d.setDate(d.getDate() + 1);
                 let date = d.toLocaleDateString('pt-BR');
                 cells.push(date)
             } else if (cell.type === "text") {
