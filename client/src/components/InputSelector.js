@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import CreatableSelect from 'react-select/creatable';
 import CurrencyInput from 'react-currency-input-field';
-import DatePicker from 'react-date-picker';
 
 
 
@@ -108,7 +107,7 @@ function InputSelector(props) {
                         <input tabIndex={-1} className="btn px-0 ms-1" type="image" alt='delete-item' id="button-delete" src='delete_item.png' onClick={(e) => {deleteItem(e, currentItem)}}></input>
                     </div> : ""
                     }
-                    <input id={`value-${props.index}`} className="d-none" value={currentItem.value}></input>
+                    <input id={`value-${props.index}`} className="d-none" readOnly value={currentItem.value}></input>
                 </div>
                 </>)
             }
@@ -124,20 +123,20 @@ function InputSelector(props) {
                     </div>
 
                     <div className="modal fade" id="dateModal" tabIndex="-1" aria-labelledby="dateModalLabel" aria-hidden="true">
-                    <div className="modal-dialog">
-                            <div className="modal-content">
-                                    <div className="modal-header">
-                                        <h5 className="modal-title" id="dateModalLabel">Date Configuration</h5>
-                                    </div>
-                                    <div className="modal-body">
-                                        <p>Today +/-: <input type="number" className='form-control-sm' value={dateChanger} onChange={(e) => {setDateChanger(e.target.value); } }></input></p>
-                                        <p>Month +/-: <input type="number" className='form-control-sm' value={monthChanger} onChange={(e) => {setMonthChanger(e.target.value); } }></input></p>
-                                    </div>
-                                    <div className="modal-footer">
-                                        <button type="submit" className="btn btn-primary" data-bs-dismiss="modal">Save changes</button>
-                                    </div>
-                            </div>
-                    </div>
+                        <div className="modal-dialog">
+                                <div className="modal-content">
+                                        <div className="modal-header">
+                                            <h5 className="modal-title" id="dateModalLabel">Date Configuration</h5>
+                                        </div>
+                                        <div className="modal-body">
+                                            <p>Today +/-: <input type="number" className='form-control-sm' value={dateChanger} onChange={(e) => {setDateChanger(e.target.value); } }></input></p>
+                                            <p>Month +/-: <input type="number" className='form-control-sm' value={monthChanger} onChange={(e) => {setMonthChanger(e.target.value); } }></input></p>
+                                        </div>
+                                        <div className="modal-footer">
+                                            <button type="submit" className="btn btn-primary" data-bs-dismiss="modal">Save changes</button>
+                                        </div>
+                                </div>
+                        </div>
                     </div>
                 </div>
                 
@@ -166,25 +165,23 @@ function InputSelector(props) {
             {
                 return (<>
                 <div className='input-group'>
-                    <CurrencyInput id={`value-${props.index}`} disableGroupSeparators={true} className={"form-control"} placeholder='$1000.00' value={currencyValue} onValueChange={(e) =>setCurrencyValue(e)} decimalSeparator={decimalSeparator} prefix={currency} step={50} fixedDecimalLength={2}/>
+                    <CurrencyInput id={`value-${props.index}`} type="currency" disableGroupSeparators={true} className={"form-control"} placeholder='$' value={currencyValue} onValueChange={(e) =>setCurrencyValue(e)} decimalSeparator={decimalSeparator} prefix={currency} step={50} fixedDecimalLength={2}/>
                     <div className='input-group-append'>
                         <input type="image" alt='currency configuration' onClick={(e) => e.preventDefault()} className="img-fluid p-1 mt-2" src='gear.svg' data-bs-toggle="modal" data-bs-target="#currencyModal"></input>
                     </div>
                     <div className="modal fade" id="currencyModal" tabIndex="-1" aria-labelledby="currencyModalLabel" aria-hidden="true">
                         <div className="modal-dialog">
                             <div className="modal-content">
-                                <form onSubmit={(e) => e.preventDefault()}>
                                     <div className="modal-header">
                                         <h5 className="modal-title" id="currencyModalLabel">Currency Configuration</h5>
                                     </div>
                                     <div className="modal-body">
-                                        <p>Currency: <input className='form-control-sm' defaultValue={currency} onChange={(e) => setCurrency(e.target.value)} ></input></p>
-                                        <p>Decimal Separator: <input className='form-control-sm' defaultValue={decimalSeparator} onChange={(e) => {setDecimalSeparator(e.target.value); }}></input></p>
+                                        <p>Currency: <input className='form-control-sm' value={currency} onChange={(e) => setCurrency(e.target.value)} ></input></p>
+                                        <p>Decimal Separator: <input className='form-control-sm' value={decimalSeparator} onChange={(e) => {setDecimalSeparator(e.target.value); }}></input></p>
                                     </div>
                                     <div className="modal-footer">
                                         <button type="submit" className="btn btn-primary" data-bs-dismiss="modal">Save changes</button>
                                     </div>
-                                </form>
                             </div>
                         </div>
                     </div>

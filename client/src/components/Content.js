@@ -78,7 +78,6 @@ function Content() {
     e.preventDefault()
     let index = localColumns.cols.findIndex(item => item.id === id)
     let clone = [...localColumns.cols]
-    console.log(clone)
     let item = await clone[index]
     item.name = e.target.value 
     clone[index] = item
@@ -92,20 +91,28 @@ function Content() {
     columns.cols.forEach((column, i) => {
         let cell = document.getElementById(`value-${i}`)
         if (cell) {
-            if (cell.type === "date") {;;
-                let d = new Date(cell.value)
-                let options = document.getElementById(`format-${i}`).value
-                d.setDate(d.getDate() + 1);
-                let date = d.toLocaleDateString('pt-BR');
-                cells.push(date)
+            if (cell.type === "date") {
+                let d = new Date(cell.value);
+                if (d != "Invalid Date") {
+                    d.setDate(d.getDate() + 1);
+                    let date = d.toLocaleDateString();
+                    cells.push(date);
+                } else {cells.push("")}
+            } else if (cell.className === "d-none") {
+                cells.push(cell.value);
+            } else if (cell.placeholder === "$") {
+                (cell.value) ? cells.push(cell.value) : cells.push("");
             } else if (cell.type === "text") {
-                let prefix = document.getElementById(`prefix-${i}`).value
-                let sufix = document.getElementById(`sufix-${i}`).value
-                cells.push(prefix + cell.value + sufix)
+                let prefix = document.getElementById(`prefix-${i}`).value;
+                let sufix = document.getElementById(`sufix-${i}`).value;
+                cells.push(prefix + cell.value + sufix);
+            } else if (cell.type === "time") {
+                cells.push(cell.value);
             }
         } else {
             cells.push("")
         }
+
     })
     return cells
   }
