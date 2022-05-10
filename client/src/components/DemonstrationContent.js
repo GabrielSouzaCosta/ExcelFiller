@@ -1,11 +1,11 @@
 import React from 'react'
-import DemonstrationNavbar from './DemonstrationNavbar'
+import Navbar from './Navbar'
 
 function DemonstrationContent() {
   return (
     <>
     <div style={{backgroundColor: "#cbd4c2"}} className='vh-100'>
-    <DemonstrationNavbar />
+    <Navbar />
     <div className='container-fluid d-flex flex-md-column justify-content-center align-items-center'>
 
             <div className='d-block'>

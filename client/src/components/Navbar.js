@@ -20,6 +20,7 @@ function Navbar() {
                     <div className="container-fluid">
                         <a tabIndex={-1} className="navbar-brand display-2 fs-2" href="/">ExcelFiller</a>
                         <ul className="nav navbar justify-content-center" >
+                            <NavLink to="/about" className={"nav-link display-5 fs-3 link-light"}>About</NavLink>
                             {(token && token !== "" && token !== undefined) ?
                                 <>
                                     <li className="nav-item"><a className="nav-link display-5 fs-3 link-light" tabIndex={-1} href="/" onClick={(e) => logout(e)} >Log out</a></li>
