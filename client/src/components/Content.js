@@ -18,7 +18,6 @@ const options = [
   ]
 
 function Content() {
-    const [tables, setTables] = useState([])
     const [currentTable, setCurrentTable] = useState({})
     const [tablesOptions, setTableOptions] = useState([])
 
@@ -34,7 +33,6 @@ function Content() {
 
     async function fetchTables (token) {
         const response = await axios.get('https://lit-bastion-94694.herokuapp.com/tables', {headers: {"Authorization": "Bearer "+ token} } );
-        setTables([...response.data])
         let data = response.data.map(({name, id}) => {
             return {value: name, label: name, id: id};
         })
@@ -149,8 +147,10 @@ function Content() {
 
                 <div className="nav justify-content-center">
                     <form className="text-center">
-                        <div className="d-flex ">
-                            <CreatableSelect placeholder="Choose or Create" options={tablesOptions} value={currentTable}  onCreateOption={(e) => createTable(e, token)} onChange={(e) => setCurrentTable(e) } />
+                        <div className="d-flex">
+                            <div style={{width: "150px"}}>
+                                <CreatableSelect options={tablesOptions}  placeholder={<div>Type to search</div>} value={currentTable}  onCreateOption={(e) => createTable(e, token)} onChange={(e) => setCurrentTable(e) }  />
+                            </div>
                             <button className="btn btn-danger ms-3" onClick={ (e) => { deleteTable(e, currentTable.id); fetchTables(token);} }>Delete Table</button>
                         </div>
                         <button type="submit" value="generateFile" onClick={(e) => generateFile(e)} className="btn btn-success mt-3 mb-4">Generate File</button>
